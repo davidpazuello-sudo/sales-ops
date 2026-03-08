@@ -1,0 +1,236 @@
+.appShell {
+  display: grid;
+  grid-template-columns: 285px 1fr;
+  grid-template-rows: 66px 1fr;
+  min-height: 100vh;
+}
+
+.topbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  background: #fff;
+  border-bottom: 1px solid #dfe3ea;
+}
+
+.topbarGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iconButton {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #9aa5b5;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.iconButton svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.iconButtonDisabled {
+  opacity: 0.45;
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hamburger span {
+  width: 16px;
+  height: 1.8px;
+  background: currentColor;
+  border-radius: 999px;
+}
+
+.panelIcon {
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  position: relative;
+}
+
+.panelIcon::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: 6px;
+  width: 2px;
+  background: currentColor;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #fcfcfd;
+  border-right: 1px solid #dfe3ea;
+}
+
+.brand {
+  height: 86px;
+  display: flex;
+  align-items: center;
+  padding: 0 22px 0 54px;
+  border-bottom: 1px solid #dfe3ea;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.brandPrimary {
+  color: #16254a;
+}
+
+.brandAccent {
+  color: #de8300;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px 10px 0;
+}
+
+.menuItem {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: calc(100% - 20px);
+  margin: 0 10px;
+  padding: 0 18px 0 22px;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background: transparent;
+  color: #617593;
+  font-size: 17px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menuItem svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: 0 0 auto;
+}
+
+.menuItemActive {
+  color: #de8300;
+  background: #f5ede0;
+  border-color: #241f1c;
+  font-weight: 700;
+}
+
+.settingsItem {
+  margin-bottom: 18px;
+}
+
+.profileCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 34px 10px;
+  border-top: 1px solid #dfe3ea;
+}
+
+.profileAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: #e9930c;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.profileName {
+  font-size: 16px;
+  font-weight: 800;
+  color: #17213a;
+}
+
+.profileRole {
+  margin-top: 2px;
+  font-size: 14px;
+  color: #8a96aa;
+}
+
+.content {
+  position: relative;
+}
+
+.contentPlaceholder {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transform: translate(-50%, -50%);
+  color: #8f9cb5;
+}
+
+.contentPlaceholder svg {
+  width: 70px;
+  height: 70px;
+  fill: none;
+  stroke: #111;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.secondaryUser {
+  opacity: 0.8;
+}
+
+.contentPlaceholder span {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+@media (max-width: 960px) {
+  .appShell {
+    grid-template-columns: 1fr;
+    grid-template-rows: 66px auto 1fr;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid #dfe3ea;
+  }
+
+  .content {
+    min-height: 55vh;
+  }
+}
