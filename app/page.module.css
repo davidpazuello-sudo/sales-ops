@@ -811,8 +811,8 @@
 
 .sellerDetailIdentity {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .sellerDetailIdentity .settingsHeader h1 {
@@ -823,6 +823,7 @@
 .sellerDetailHeaderBlock {
   display: grid;
   justify-items: flex-start;
+  gap: 0;
 }
 
 .sellerDetailIdentity .settingsHeader p {
@@ -834,7 +835,7 @@
   display: flex;
   gap: 10px;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 14px;
 }
 
 .primaryActionButton,
@@ -856,7 +857,7 @@
 .primaryActionButton {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   border: 0;
   background: linear-gradient(135deg, var(--accent), #f3a43d);
   color: #fff;

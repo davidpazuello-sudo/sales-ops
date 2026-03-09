@@ -818,23 +818,6 @@ function SellerMeetingDetailContent({ dashboardData, sellerSlug, meetingId }) {
             </div>
           )}
         </Card>
-
-        <Card eyebrow="PAUTA" title={isNewMeeting ? "Itens esperados" : "Pontos principais"} wide>
-          <div className={styles.meetingNotesList}>
-            {(isNewMeeting
-              ? [
-                  "Definir objetivo da reuniao.",
-                  "Relacionar contas ou negocios discutidos.",
-                  "Registrar proximos passos e responsaveis.",
-                ]
-              : meeting.notes).map((note) => (
-              <div key={note} className={styles.meetingNoteItem}>
-                <span className={styles.meetingBullet} />
-                <p>{note}</p>
-              </div>
-            ))}
-          </div>
-        </Card>
       </div>
     </section>
   );
