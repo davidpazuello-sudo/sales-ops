@@ -228,6 +228,15 @@ const personalizationToggles = [
   { id: "instantPreview", label: "Prévia instantânea", description: "Aplica as alterações assim que você seleciona." },
 ];
 
+function sellerToSlug(name) {
+  return String(name || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function MenuIcon() {
   return <div className={styles.hamburger} aria-hidden="true"><span /><span /><span /></div>;
 }
@@ -469,6 +478,7 @@ function DealsContent({ dashboardData }) {
 }
 
 function SellersContent({ dashboardData }) {
+  const router = useRouter();
   const [sellerFilter, setSellerFilter] = useState("");
   const filteredSellers = dashboardData.sellers.filter((seller) =>
     seller.name.toLowerCase().includes(sellerFilter.trim().toLowerCase()),
@@ -493,7 +503,12 @@ function SellersContent({ dashboardData }) {
 
       <div className={styles.sellerProfilesGrid}>
         {filteredSellers.map((seller) => (
-          <article key={seller.name} className={styles.sellerProfileContainer}>
+          <button
+            key={seller.name}
+            type="button"
+            className={styles.sellerProfileContainer}
+            onClick={() => router.push(`/vendedores/${sellerToSlug(seller.name)}`)}
+          >
             <article className={styles.sellerProfileCard}>
               <div className={styles.sellerProfileTop}>
                 <div className={styles.sellerAvatar}>{seller.initials}</div>
@@ -521,8 +536,59 @@ function SellersContent({ dashboardData }) {
 
               <p className={styles.sellerNote}>{seller.note}</p>
             </article>
-          </article>
+          </button>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function SellerProfileContent({ dashboardData, sellerSlug }) {
+  const seller = dashboardData.sellers.find((item) => sellerToSlug(item.name) === sellerSlug) || dashboardData.sellers[0];
+  const sellerDeals = dashboardData.deals.filter((deal) => deal.owner === seller.name);
+
+  return (
+    <section className={styles.dashboardSection}>
+      <header className={styles.sellerDetailHeader}>
+        <div className={styles.sellerDetailIdentity}>
+          <div className={styles.sellerDetailAvatar}>{seller.initials}</div>
+          <div className={styles.settingsHeader}>
+            <h1>{seller.name}</h1>
+            <p>{seller.team}</p>
+          </div>
+        </div>
+      </header>
+
+      <div className={styles.grid}>
+        <Card eyebrow="PERFIL" title="Resumo do vendedor" wide>
+          <div className={styles.metrics}>
+            <Metric title="Meta" value={`${seller.metaPercent}%`} note="Performance puxada da HubSpot" />
+            <Metric title="Pipeline" value={seller.pipelineLabel} note={`${seller.openDeals} negocio(s) em aberto`} />
+            <Metric title="Saude" value={seller.health} note={seller.status} />
+          </div>
+          <p className={styles.sellerDetailNote}>{seller.note}</p>
+        </Card>
+
+        <Card eyebrow="NEGOCIOS" title="Pipeline do vendedor" wide>
+          <div className={styles.dealList}>
+            {sellerDeals.length ? sellerDeals.map((deal) => (
+              <article key={deal.id} className={styles.dealListItem}>
+                <div className={styles.dealIdentity}>
+                  <strong>{deal.name}</strong>
+                  <span>{deal.stage}</span>
+                </div>
+                <div className={styles.dealMeta}>
+                  <strong>{deal.amountLabel}</strong>
+                  <span>Valor estimado</span>
+                </div>
+                <div className={styles.dealMeta}>
+                  <strong>{deal.staleLabel}</strong>
+                  <span>Ultima atividade</span>
+                </div>
+              </article>
+            )) : <p className={styles.sellerDetailNote}>Nenhum negocio atribuido a este vendedor no momento.</p>}
+          </div>
+        </Card>
       </div>
     </section>
   );
@@ -532,6 +598,7 @@ export default function DashboardShell({
   initialNav = "reports",
   initialConfig = "hubspot",
   initialProfileView = false,
+  sellerSlug = "",
 }) {
   const router = useRouter();
   const [personalization, setPersonalization] = useState(personalizationDefaults);
@@ -797,6 +864,8 @@ export default function DashboardShell({
               </div>
             </div>
           </section>
+        ) : sellerSlug ? (
+          <SellerProfileContent dashboardData={dashboardData} sellerSlug={sellerSlug} />
         ) : activeNav === "sellers" ? (
           <SellersContent dashboardData={dashboardData} />
         ) : activeNav === "reports" ? (
