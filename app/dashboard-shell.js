@@ -447,7 +447,13 @@ function Table({ head, rows, matrix = false }) {
 }
 
 function Metric({ title, value, note }) {
-  return <div className={styles.metric}><span>{title}</span><strong>{value}</strong><small>{note}</small></div>;
+  return (
+    <div className={styles.metric}>
+      <span>{title}</span>
+      <strong>{value}</strong>
+      {note ? <small>{note}</small> : null}
+    </div>
+  );
 }
 
 function OptionGroup({ title, options, value, onChange }) {
@@ -1056,7 +1062,7 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
       <div className={styles.grid}>
         <Card eyebrow="GERAL" title="Visao geral do pipeline" wide>
           <div className={styles.metrics}>
-            <Metric title="Negocios abertos" value={`${seller.openDeals}`} note="Carteira ativa na HubSpot" />
+            <Metric title="Negocios abertos" value={`${seller.openDeals}`} />
             <Metric
               title="Valor total na pipeline"
               value={new Intl.NumberFormat("pt-BR", {
@@ -1064,10 +1070,9 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
                 currency: "BRL",
                 maximumFractionDigits: 0,
               }).format(totalPipelineValue)}
-              note="Potencial financeiro atual"
             />
-            <Metric title="Tarefas a fazer" value={`${pendingTasks}`} note="Negocios sem proximo passo recente" />
-            <Metric title="Status motivacao" value={motivationStatus} note="Leitura geral de ritmo e desempenho" />
+            <Metric title="Tarefas a fazer" value={`${pendingTasks}`} />
+            <Metric title="Status motivacao" value={motivationStatus} />
           </div>
           <div className={styles.pipelineStageChart}>
             {kanbanColumns.map((column) => (
