@@ -286,15 +286,23 @@
 
 .content {
   min-width: 0;
+  height: calc(100vh - 52px);
+  overflow: auto;
 }
 
 .settingsLayout {
   display: grid;
   grid-template-columns: 280px 1fr;
-  min-height: calc(100vh - 52px);
+  min-height: 100%;
+  align-items: start;
 }
 
 .settingsSidebar {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: calc(100vh - 52px);
+  overflow: auto;
   padding: 26px 14px;
   background: #fcfcfd;
   border-right: 1px solid #e3e7ee;
@@ -341,11 +349,16 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(290px, auto);
   gap: 18px;
   margin-top: 28px;
 }
 
 .card {
+  height: 100%;
+  min-height: 290px;
+  display: flex;
+  flex-direction: column;
   border-radius: 20px;
   padding: 22px 24px;
   background: #fcfcfd;
@@ -354,6 +367,7 @@
 
 .cardWide {
   grid-column: 1 / -1;
+  min-height: 250px;
 }
 
 .cardEyebrow {
@@ -698,6 +712,9 @@
 
   .sidebar,
   .settingsSidebar {
+    position: static;
+    height: auto;
+    overflow: visible;
     border-right: 0;
     border-bottom: 1px solid #e3e7ee;
   }
