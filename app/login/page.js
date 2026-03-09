@@ -24,7 +24,7 @@ const qrCells = [
 
 export default function LoginPage() {
   const router = useRouter();
-  const [requestMode, setRequestMode] = useState(false);
+  const [view, setView] = useState("login");
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -33,7 +33,12 @@ export default function LoginPage() {
 
   function handleRequestAccess(event) {
     event.preventDefault();
-    setRequestMode(false);
+    setView("login");
+  }
+
+  function handleForgotPassword(event) {
+    event.preventDefault();
+    setView("login");
   }
 
   return (
@@ -46,15 +51,23 @@ export default function LoginPage() {
       <div className={styles.loginCard}>
         <section className={styles.formSide}>
           <div className={styles.welcomeBlock}>
-            <h1>{requestMode ? "Solicitar acesso" : "Boas-vindas de volta!"}</h1>
+            <h1>
+              {view === "request"
+                ? "Solicitar acesso"
+                : view === "forgot"
+                  ? "Recuperar senha"
+                  : "Boas-vindas de volta!"}
+            </h1>
             <p>
-              {requestMode
+              {view === "request"
                 ? "Informe seu email corporativo para pedir acesso ao workspace do SalesOps."
-                : "Estamos muito animados em te ver novamente!"}
+                : view === "forgot"
+                  ? "Digite seu email corporativo para receber as instrucoes de redefinicao de senha."
+                  : "Estamos muito animados em te ver novamente!"}
             </p>
           </div>
 
-          {requestMode ? (
+          {view === "request" ? (
             <>
               <form className={styles.form} onSubmit={handleRequestAccess}>
                 <label className={styles.field}>
@@ -72,7 +85,31 @@ export default function LoginPage() {
                 <button
                   type="button"
                   className={styles.inlineAction}
-                  onClick={() => setRequestMode(false)}
+                  onClick={() => setView("login")}
+                >
+                  Voltar para login
+                </button>
+              </div>
+            </>
+          ) : view === "forgot" ? (
+            <>
+              <form className={styles.form} onSubmit={handleForgotPassword}>
+                <label className={styles.field}>
+                  <span>Email corporativo</span>
+                  <input type="email" placeholder="voce@empresa.com" />
+                </label>
+
+                <button type="submit" className={styles.primaryButton}>
+                  Enviar link de recuperacao
+                </button>
+              </form>
+
+              <div className={styles.footerNote}>
+                <span>Lembrou sua senha?</span>
+                <button
+                  type="button"
+                  className={styles.inlineAction}
+                  onClick={() => setView("login")}
                 >
                   Voltar para login
                 </button>
@@ -91,7 +128,11 @@ export default function LoginPage() {
                   <input type="password" placeholder="Digite sua senha" />
                 </label>
 
-                <button type="button" className={styles.inlineAction}>
+                <button
+                  type="button"
+                  className={styles.inlineAction}
+                  onClick={() => setView("forgot")}
+                >
                   Esqueceu sua senha?
                 </button>
 
@@ -105,7 +146,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   className={styles.inlineAction}
-                  onClick={() => setRequestMode(true)}
+                  onClick={() => setView("request")}
                 >
                   Solicitar acesso
                 </button>

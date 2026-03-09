@@ -80,6 +80,34 @@ function BellIcon() {
   );
 }
 
+function PaperclipIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8.5 12.5l6.4-6.4a3 3 0 1 1 4.2 4.2l-8.5 8.5a5 5 0 0 1-7.1-7.1l8.5-8.5" />
+    </svg>
+  );
+}
+
+function MicIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="9" y="4" width="6" height="10" rx="3" />
+      <path d="M6.5 11.5a5.5 5.5 0 0 0 11 0" />
+      <path d="M12 17v3" />
+      <path d="M9 20h6" />
+    </svg>
+  );
+}
+
+function SendIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M21 3L10 14" />
+      <path d="M21 3l-7 18-4-7-7-4z" />
+    </svg>
+  );
+}
+
 function BaseIcon({ children }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true">{children}</svg>;
 }
@@ -327,11 +355,11 @@ export default function AIAgentPage() {
                 ) : null}
 
                 <div className={styles.composerRow}>
-                  <button type="button" className={styles.utilityButton} onClick={() => fileInputRef.current?.click()}>
-                    Anexar
+                  <button type="button" className={styles.iconButton} onClick={() => fileInputRef.current?.click()} aria-label="Anexar arquivos" title="Anexar arquivos">
+                    <PaperclipIcon />
                   </button>
-                  <button type="button" className={`${styles.utilityButton} ${isListening ? styles.utilityButtonActive : ""}`.trim()} onClick={toggleListening} disabled={!recognitionRef.current}>
-                    {isListening ? "Ouvindo..." : "Microfone"}
+                  <button type="button" className={`${styles.iconButton} ${isListening ? styles.utilityButtonActive : ""}`.trim()} onClick={toggleListening} disabled={!recognitionRef.current} aria-label="Falar com microfone" title={isListening ? "Ouvindo..." : "Falar com microfone"}>
+                    <MicIcon />
                   </button>
                   <input
                     type="text"
@@ -339,7 +367,10 @@ export default function AIAgentPage() {
                     onChange={(event) => setInputValue(event.target.value)}
                     placeholder="Pergunte sobre riscos, desempenho, falhas ou oportunidades..."
                   />
-                  <button type="submit">Enviar</button>
+                  <button type="submit" className={styles.sendButton}>
+                    <SendIcon />
+                    <span>Enviar</span>
+                  </button>
                 </div>
                 <input ref={fileInputRef} type="file" className={styles.hiddenInput} multiple onChange={handleFilesSelected} accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.webp,.txt,.ppt,.pptx" />
               </form>

@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
+const STORAGE_KEY = "salesops-personalization";
+
 const navItems = [
   { id: "reports", label: "Relatórios" },
   { id: "sellers", label: "Vendedores" },
@@ -12,6 +14,23 @@ const navItems = [
 ];
 
 const topMenuItems = ["Arquivo", "Editar", "Visualizar", "Ajuda"];
+
+const navShortcuts = {
+  reports: "R",
+  sellers: "V",
+  deals: "N",
+  settings: "S",
+};
+
+const configShortcuts = {
+  hubspot: "H",
+  notifications: "A",
+  ai: "I",
+  personalize: "P",
+  exports: "E",
+  storage: "M",
+  compliance: "C",
+};
 
 const accountSection = {
   id: "account",
@@ -81,13 +100,27 @@ const themeOptions = ["Claro ativo", "Escuro", "Automático"];
 const fontOptions = ["Manrope", "IBM Plex Sans", "Source Sans 3"];
 const fontSizeOptions = ["Pequena", "Média", "Grande"];
 const densityOptions = ["Compacta", "Confortável", "Expandida"];
-const personalizationRows = [
-  ["Contraste elevado", "Desativado"],
-  ["Animações sutis", "Ativado"],
-  ["Sidebar recolhida ao abrir", "Desativado"],
-  ["Cards com borda reforçada", "Ativado"],
-  ["Mostrar atalhos de teclado", "Ativado"],
-  ["Prévia instantânea", "Ativada"],
+
+const personalizationDefaults = {
+  theme: "Claro ativo",
+  font: "Manrope",
+  fontSize: "Média",
+  density: "Confortável",
+  highContrast: false,
+  animations: true,
+  collapseSidebarOnOpen: false,
+  reinforcedCards: false,
+  showShortcuts: true,
+  instantPreview: true,
+};
+
+const personalizationToggles = [
+  { id: "highContrast", label: "Contraste elevado", description: "Melhora a legibilidade de textos e bordas." },
+  { id: "animations", label: "Animações sutis", description: "Liga ou reduz transições visuais do painel." },
+  { id: "collapseSidebarOnOpen", label: "Sidebar recolhida ao abrir", description: "Inicia a navegação lateral recolhida." },
+  { id: "reinforcedCards", label: "Cards com borda reforçada", description: "Dá mais destaque visual aos containers." },
+  { id: "showShortcuts", label: "Mostrar atalhos de teclado", description: "Exibe dicas curtas de navegação quando disponíveis." },
+  { id: "instantPreview", label: "Prévia instantânea", description: "Aplica as alterações assim que você seleciona." },
 ];
 
 function MenuIcon() {
@@ -137,7 +170,7 @@ function SparkIcon() {
 function BellIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7 10a5 5 0 1 1 10 0c0 4.5 2 6 2 6H5s2-1.5 2-6" />
+      <path d="M7 10a5 5 0 1 1 10 0c0 4.5 2 6 2 6H5s2-1 2-6" />
       <path d="M10 18a2 2 0 0 0 4 0" />
     </svg>
   );
@@ -159,6 +192,7 @@ function getConfigIcon(id) {
   if (id === "hubspot") return <BaseIcon><path d="M10 14l4-4" /><path d="M7.5 16.5l-1.2 1.2a3.5 3.5 0 1 1-5-5l3.2-3.2a3.5 3.5 0 0 1 5 0" /><path d="M16.5 7.5l1.2-1.2a3.5 3.5 0 1 1 5 5l-3.2 3.2a3.5 3.5 0 0 1-5 0" /></BaseIcon>;
   if (id === "notifications") return <BaseIcon><path d="M7 10a5 5 0 1 1 10 0c0 5 2 6 2 6H5s2-1 2-6" /><path d="M10 18a2 2 0 0 0 4 0" /></BaseIcon>;
   if (id === "ai") return <BaseIcon><path d="M9 4a3 3 0 0 0-3 3v1a2.5 2.5 0 0 0-2 2.5A2.5 2.5 0 0 0 6 13v1a3 3 0 0 0 3 3" /><path d="M15 4a3 3 0 0 1 3 3v1a2.5 2.5 0 0 1 2 2.5A2.5 2.5 0 0 1 18 13v1a3 3 0 0 1-3 3" /><path d="M9 4a3 3 0 0 1 3 3v10" /><path d="M15 4a3 3 0 0 0-3 3v10" /></BaseIcon>;
+  if (id === "personalize") return <BaseIcon><path d="M12 4l1.8 2.7 3.2.5-2.2 2.2.5 3.2-3.3-1.7-3.3 1.7.5-3.2-2.2-2.2 3.2-.5z" /><path d="M12 13v7" /></BaseIcon>;
   if (id === "exports") return <BaseIcon><path d="M8 3h6l4 4v14H8z" /><path d="M14 3v4h4" /><path d="M10 12h6" /><path d="M10 16h6" /></BaseIcon>;
   if (id === "storage") return <BaseIcon><path d="M5 8.5h14v7H5z" /><path d="M7 5h10" /><path d="M7 19h10" /></BaseIcon>;
   return <BaseIcon><path d="M12 3l7 3v5c0 4.5-2.9 8.5-7 10-4.1-1.5-7-5.5-7-10V6z" /><path d="M9.5 12l1.8 1.8 3.7-4" /></BaseIcon>;
@@ -182,7 +216,7 @@ function PhotoOption() {
       <div className={styles.photoPreview}>?</div>
       <div className={styles.photoMeta}>
         <strong>Foto do perfil</strong>
-        <span>JPG ou PNG, ate 5 MB.</span>
+        <span>JPG ou PNG, até 5 MB.</span>
       </div>
       <button type="button" className={styles.photoAction}>Adicionar foto</button>
     </div>
@@ -190,13 +224,21 @@ function PhotoOption() {
 }
 
 function Card({ eyebrow, title, children, wide = false }) {
-  return <section className={`${styles.card} ${wide ? styles.cardWide : ""}`.trim()}><span className={styles.cardEyebrow}>{eyebrow}</span><h2 className={styles.cardTitle}>{title}</h2>{children}</section>;
+  return (
+    <section className={`${styles.card} ${wide ? styles.cardWide : ""}`.trim()}>
+      <span className={styles.cardEyebrow}>{eyebrow}</span>
+      <h2 className={styles.cardTitle}>{title}</h2>
+      {children}
+    </section>
+  );
 }
 
 function Table({ head, rows, matrix = false }) {
   return (
     <div className={styles.table}>
-      <div className={`${styles.tableHead} ${matrix ? styles.matrixCols : ""}`.trim()}>{head.map((item) => <span key={item}>{item}</span>)}</div>
+      <div className={`${styles.tableHead} ${matrix ? styles.matrixCols : ""}`.trim()}>
+        {head.map((item) => <span key={item}>{item}</span>)}
+      </div>
       {rows.map((row, idx) => (
         <div key={`${row[0]}-${idx}`} className={`${styles.tableRow} ${matrix ? styles.matrixCols : ""}`.trim()}>
           {row.map((cell, cellIndex) => <span key={`${cell}-${cellIndex}`}>{cell}</span>)}
@@ -210,13 +252,13 @@ function Metric({ title, value, note }) {
   return <div className={styles.metric}><span>{title}</span><strong>{value}</strong><small>{note}</small></div>;
 }
 
-function OptionGroup({ title, options }) {
+function OptionGroup({ title, options, value, onChange }) {
   return (
     <div className={styles.optionGroup}>
       <span className={styles.optionGroupLabel}>{title}</span>
       <div className={styles.optionPills}>
-        {options.map((option, index) => (
-          <button key={option} type="button" className={`${styles.optionPill} ${index === 0 ? styles.optionPillActive : ""}`.trim()}>
+        {options.map((option) => (
+          <button key={option} type="button" onClick={() => onChange(option)} className={`${styles.optionPill} ${value === option ? styles.optionPillActive : ""}`.trim()}>
             {option}
           </button>
         ))}
@@ -225,12 +267,30 @@ function OptionGroup({ title, options }) {
   );
 }
 
-function SettingsContent({ section }) {
+function PreferenceTable({ rows, values, onToggle }) {
+  return (
+    <div className={styles.preferenceTable}>
+      {rows.map((row) => (
+        <div key={row.id} className={styles.preferenceRow}>
+          <div className={styles.preferenceCopy}>
+            <strong>{row.label}</strong>
+            <span>{row.description}</span>
+          </div>
+          <button type="button" onClick={() => onToggle(row.id)} className={`${styles.toggleButton} ${values[row.id] ? styles.toggleButtonActive : ""}`.trim()}>
+            <span />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SettingsContent({ section, personalization, updatePersonalization }) {
   if (section === "account") return <div className={styles.grid}><Card eyebrow="PERFIL" title="Conta & Acesso"><PhotoOption /><Row label="Nome" value="Usuário SalesOps" /><Row label="Senha" value="Última troca há 14 dias" /><Row label="2FA" value="Obrigatório para gestão" helper="SMS + autenticador" /><Row label="Sessões ativas" value="5 dispositivos" helper="2 navegadores e 3 mobile" /></Card><Card eyebrow="PERMISSÕES" title="Permissões por cargo"><Table head={["Cargo", "Acesso"]} rows={permissionRows} /></Card></div>;
   if (section === "hubspot") return <div className={styles.grid}><Card eyebrow="STATUS" title="Integração HubSpot"><Row label="Conexão" value="Ativa" helper="Último handshake hoje às 09:01" /><Row label="API key" value="•••• •••• •••• 98K2" /><Row label="Sync" value="A cada 5 minutos" /></Card><Card eyebrow="MAPEAMENTO" title="Campos sincronizados" wide><Table head={["SalesOps", "HubSpot", "Status"]} rows={mappingRows} /></Card><Card eyebrow="LOG" title="Erros recentes"><Table head={["Hora", "Erro", "Gravidade"]} rows={errorRows} /></Card></div>;
   if (section === "notifications") return <div className={styles.grid}><Card eyebrow="CANAIS" title="Notificações & Alertas"><Row label="Email" value="Ativo" helper="comercial@salesops.ai" /><Row label="Push" value="Ativo" helper="Chrome + mobile" /><Row label="Resumo automático" value="Diário" /></Card><Card eyebrow="THRESHOLDS" title="Metas e thresholds" wide><div className={styles.metrics}>{metricRows.map((item) => <Metric key={item[0]} title={item[0]} value={item[1]} note={item[2]} />)}</div></Card></div>;
   if (section === "ai") return <div className={styles.grid}><Card eyebrow="MODELO" title="IA & Diagnósticos"><Row label="Modelo ativo" value="GPT SalesOps Analyst" /><Row label="Assistente de voz" value="Habilitado" /><Row label="Sensibilidade" value="Moderada" helper="menos ruído, mais sinais de risco" /></Card><Card eyebrow="DADOS" title="Dados que alimentam a IA" wide><div className={styles.tags}><span>Negócios</span><span>Atividades</span><span>Calls gravadas</span><span>Sentimento do vendedor</span><span>Próximas tarefas</span></div></Card></div>;
-  if (section === "personalize") return <div className={styles.grid}><Card eyebrow="APARÊNCIA" title="Tema e tipografia"><OptionGroup title="Tema" options={themeOptions} /><OptionGroup title="Fonte principal" options={fontOptions} /><OptionGroup title="Tamanho das letras" options={fontSizeOptions} /></Card><Card eyebrow="INTERFACE" title="Densidade e leitura"><OptionGroup title="Densidade" options={densityOptions} /><Table head={["Preferência", "Status"]} rows={personalizationRows} /></Card><Card eyebrow="VISUAL" title="Prévia das personalizações" wide><div className={styles.previewPanel}><div className={styles.previewCard}><span>Cards</span><strong>Raio 20px</strong><small>Hierarquia clara com bordas suaves.</small></div><div className={styles.previewCard}><span>Texto</span><strong>Escala média</strong><small>Leitura equilibrada para dashboards e tabelas.</small></div><div className={styles.previewCard}><span>Navegação</span><strong>Confortável</strong><small>Espaçamentos consistentes e foco visual reforçado.</small></div></div></Card></div>;
+  if (section === "personalize") return <div className={styles.grid}><Card eyebrow="APARÊNCIA" title="Tema e tipografia"><OptionGroup title="Tema" options={themeOptions} value={personalization.theme} onChange={(value) => updatePersonalization("theme", value)} /><OptionGroup title="Fonte principal" options={fontOptions} value={personalization.font} onChange={(value) => updatePersonalization("font", value)} /><OptionGroup title="Tamanho das letras" options={fontSizeOptions} value={personalization.fontSize} onChange={(value) => updatePersonalization("fontSize", value)} /></Card><Card eyebrow="INTERFACE" title="Densidade e leitura"><OptionGroup title="Densidade" options={densityOptions} value={personalization.density} onChange={(value) => updatePersonalization("density", value)} /><PreferenceTable rows={personalizationToggles} values={personalization} onToggle={(id) => updatePersonalization(id, !personalization[id])} /></Card><Card eyebrow="VISUAL" title="Prévia das personalizações" wide><div className={styles.previewPanel}><div className={styles.previewCard}><span>Cards</span><strong>{personalization.reinforcedCards ? "Borda reforçada" : "Borda padrão"}</strong><small>{personalization.reinforcedCards ? "Superfícies com mais destaque visual." : "Superfícies leves e discretas."}</small></div><div className={styles.previewCard}><span>Texto</span><strong>{personalization.fontSize}</strong><small>{personalization.font} com escala {personalization.fontSize.toLowerCase()}.</small></div><div className={styles.previewCard}><span>Navegação</span><strong>{personalization.density}</strong><small>{personalization.collapseSidebarOnOpen ? "Sidebar inicia recolhida." : "Sidebar inicia expandida."}</small></div></div></Card></div>;
   if (section === "exports") return <div className={styles.grid}><Card eyebrow="AGENDAMENTO" title="Relatórios & Exportação"><Row label="Envio semanal" value="Segunda, 07:30" /><Row label="Formato" value="PDF + XLSX" /><Row label="Marca d'água" value="Confidencial" /></Card><Card eyebrow="TEMPLATES" title="Templates por cargo" wide><Table head={["Cargo", "Template", "Formato"]} rows={reportRows} /></Card></div>;
   if (section === "storage") return <div className={styles.grid}><Card eyebrow="USO" title="Gestão de Mídia & Storage"><div className={styles.usage}><div className={styles.usageTop}><strong>38.4 / 100 GB</strong><span>38%</span></div><div className={styles.usageBar}><span style={{ width: "38.4%" }} /></div><p>Gravações semanais, áudios e anexos operacionais.</p></div><Row label="Hot storage" value="45 dias" /><Row label="Cold storage" value="365 dias" helper="arquivamento automático" /></Card><Card eyebrow="STT" title="Fila de transcrição em tempo real" wide><Table head={["Arquivo", "Status", "Progresso"]} rows={queueRows} /></Card><Card eyebrow="PROVEDOR" title="Indexação e provedor"><Row label="Provedor" value="Azure Blob Storage" /><Row label="Região" value="Brazil South" helper="aderência LGPD" /><Row label="Indexação IA" value="Ativa" /></Card></div>;
   return <div className={styles.grid}><Card eyebrow="AUDITORIA" title="Eventos recentes" wide><Table head={["Quem", "O quê", "Quando"]} rows={auditRows} /></Card><Card eyebrow="MASKING" title="Matriz visual por campo e cargo"><Table head={["Campo", "Admin", "Gestor", "Vendedor"]} rows={maskingRows} matrix /></Card><Card eyebrow="LGPD" title="Consentimento e conformidade"><Row label="Consentimento" value="Registrado por contato" /><Row label="Esquecimento" value="Fluxo habilitado" helper="remoção em até 7 dias" /><Row label="Relatório" value="Atualizado hoje" /></Card></div>;
@@ -238,10 +298,11 @@ function SettingsContent({ section }) {
 
 export default function HomePage() {
   const router = useRouter();
+  const [personalization, setPersonalization] = useState(personalizationDefaults);
   const [activeNav, setActiveNav] = useState("settings");
   const [activeConfig, setActiveConfig] = useState("hubspot");
   const [profileViewOpen, setProfileViewOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(personalizationDefaults.collapseSidebarOnOpen);
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoutPromptOpen, setLogoutPromptOpen] = useState(false);
   const menuRef = useRef(null);
@@ -264,10 +325,64 @@ export default function HomePage() {
     };
   }, []);
 
-  const currentSection =
-    activeConfig === "account"
-      ? accountSection
-      : configSections.find((item) => item.id === activeConfig);
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEY);
+      if (!stored) return;
+      const next = { ...personalizationDefaults, ...JSON.parse(stored) };
+      setPersonalization(next);
+      setCollapsed(Boolean(next.collapseSidebarOnOpen));
+    } catch {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const systemDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
+    const theme = personalization.theme === "Automático" ? (systemDark ? "dark" : "light") : (personalization.theme === "Escuro" ? "dark" : "light");
+    const fontMap = {
+      Manrope: "manrope",
+      "IBM Plex Sans": "ibm-plex-sans",
+      "Source Sans 3": "source-sans-3",
+    };
+    const fontSizeMap = {
+      Pequena: "small",
+      Média: "medium",
+      Grande: "large",
+    };
+    const densityMap = {
+      Compacta: "compact",
+      Confortável: "comfortable",
+      Expandida: "expanded",
+    };
+
+    root.dataset.theme = theme;
+    root.dataset.font = fontMap[personalization.font];
+    root.dataset.fontSize = fontSizeMap[personalization.fontSize];
+    root.dataset.density = densityMap[personalization.density];
+    root.dataset.contrast = personalization.highContrast ? "high" : "normal";
+    root.dataset.cards = personalization.reinforcedCards ? "reinforced" : "standard";
+    root.dataset.animations = personalization.animations ? "on" : "off";
+    root.dataset.shortcuts = personalization.showShortcuts ? "on" : "off";
+    root.dataset.preview = personalization.instantPreview ? "instant" : "manual";
+
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(personalization));
+  }, [personalization]);
+
+  function updatePersonalization(key, value) {
+    setPersonalization((current) => {
+      const next = { ...current, [key]: value };
+      if (key === "collapseSidebarOnOpen") {
+        setCollapsed(Boolean(value));
+      }
+      return next;
+    });
+  }
+
+  const currentSection = activeNav === "profile"
+    ? accountSection
+    : configSections.find((item) => item.id === activeConfig);
 
   return (
     <main className={`${styles.appShell} ${collapsed ? styles.appShellCollapsed : ""}`.trim()}>
@@ -275,33 +390,19 @@ export default function HomePage() {
         <div className={styles.topbarGroup}>
           <div className={styles.menuWrap} ref={menuRef}>
             <button type="button" className={`${styles.topbarButton} ${menuOpen ? styles.topbarButtonActive : ""}`.trim()} onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen} aria-label="Menu"><MenuIcon /></button>
-            {menuOpen ? <div className={styles.dropdownMenu} role="menu">{topMenuItems.map((item) => <button key={item} type="button" className={styles.dropdownItem} role="menuitem" onClick={() => setMenuOpen(false)}><span>{item}</span><ChevronSmallIcon /></button>)}</div> : null}
+            {menuOpen ? <div className={styles.dropdownMenu} role="menu">{topMenuItems.map((item) => <button key={item} type="button" className={styles.dropdownItem} role="menuitem" onClick={() => setMenuOpen(false)}><span>{item}</span><kbd className={styles.shortcutHint}>{item.charAt(0)}</kbd></button>)}</div> : null}
           </div>
           <button type="button" className={styles.topbarButton} aria-label="Recolher barra lateral" onClick={() => setCollapsed((value) => !value)}><PanelsIcon /></button>
           <button type="button" className={styles.topbarButton} aria-label="Voltar" onClick={() => window.history.back()}><SimpleArrow /></button>
           <button type="button" className={styles.topbarButton} aria-label="Avançar" onClick={() => window.history.forward()}><SimpleArrow right /></button>
         </div>
         <div className={styles.topbarActions}>
-          <button
-            type="button"
-            className={styles.aiButton}
-            onClick={() => router.push("/ai-agent")}
-            title="Agente de IA para análise completa do sistema respeitando perfil e acesso"
-          >
+          <button type="button" className={`${styles.topbarButton} ${styles.notificationButton}`.trim()} aria-label="Notificações" title="Notificações" onClick={() => { setActiveNav("settings"); setActiveConfig("notifications"); setProfileViewOpen(false); }}>
+            <BellIcon />
+          </button>
+          <button type="button" className={styles.aiButton} onClick={() => router.push("/ai-agent")} title="Agente de IA para análise completa do sistema respeitando perfil e acesso">
             <SparkIcon />
             <span>Agente de IA</span>
-          </button>
-          <button
-            type="button"
-            className={`${styles.topbarButton} ${styles.notificationButton}`.trim()}
-            aria-label="Notificações"
-            title="Notificações"
-            onClick={() => {
-              setActiveNav("settings");
-              setActiveConfig("notifications");
-            }}
-          >
-            <BellIcon />
           </button>
           <button type="button" className={styles.logoutButton} onClick={() => setLogoutPromptOpen(true)}>
             <LogoutIcon />
@@ -318,6 +419,7 @@ export default function HomePage() {
               <button key={item.id} type="button" onClick={() => setActiveNav(item.id)} className={`${styles.navItem} ${activeNav === item.id ? styles.navItemActive : ""}`.trim()} title={collapsed ? item.label : undefined}>
                 <span className={styles.navIcon}>{getNavIcon(item.id)}</span>
                 <span className={styles.navLabel}>{item.label}</span>
+                <kbd className={styles.shortcutHint}>{navShortcuts[item.id]}</kbd>
               </button>
             ))}
           </nav>
@@ -326,13 +428,14 @@ export default function HomePage() {
           <button type="button" onClick={() => { setActiveNav("settings"); setProfileViewOpen(false); }} className={`${styles.navItem} ${styles.settingsItem} ${activeNav === "settings" && !profileViewOpen ? styles.navItemActive : ""}`.trim()} title={collapsed ? "Configurações" : undefined}>
             <span className={styles.navIcon}>{getNavIcon("settings")}</span>
             <span className={styles.navLabel}>Configurações</span>
+            <kbd className={styles.shortcutHint}>{navShortcuts.settings}</kbd>
           </button>
           <button
             type="button"
             className={`${styles.profileBox} ${profileViewOpen ? styles.profileBoxActive : ""}`.trim()}
             onClick={() => {
               setActiveNav("profile");
-              setActiveConfig("account");
+              setActiveConfig("hubspot");
               setProfileViewOpen(true);
             }}
           >
@@ -353,6 +456,7 @@ export default function HomePage() {
                     <button key={item.id} type="button" onClick={() => { setActiveConfig(item.id); setProfileViewOpen(false); }} className={`${styles.settingsSidebarItem} ${activeConfig === item.id ? styles.settingsSidebarItemActive : ""}`.trim()}>
                       <span className={styles.settingsSidebarIcon}>{getConfigIcon(item.id)}</span>
                       <span className={styles.settingsSidebarLabel}>{item.label}</span>
+                      <kbd className={styles.shortcutHint}>{configShortcuts[item.id]}</kbd>
                     </button>
                   ))}
                 </div>
@@ -363,7 +467,7 @@ export default function HomePage() {
                 <h1>{currentSection?.label}</h1>
                 <p>{currentSection?.description}</p>
               </header>
-              {profileViewOpen ? <div className={styles.profileStandalone}><SettingsContent section="account" /></div> : <SettingsContent section={activeConfig} />}
+              <SettingsContent section={activeConfig} personalization={personalization} updatePersonalization={updatePersonalization} />
             </div>
           </section>
         ) : activeNav === "profile" ? (
@@ -374,7 +478,7 @@ export default function HomePage() {
                 <p>{accountSection.description}</p>
               </header>
               <div className={styles.profileStandalone}>
-                <SettingsContent section="account" />
+                <SettingsContent section="account" personalization={personalization} updatePersonalization={updatePersonalization} />
               </div>
             </div>
           </section>
