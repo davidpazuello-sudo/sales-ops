@@ -105,6 +105,25 @@ function LogoutIcon() {
   );
 }
 
+function SparkIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3l1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7z" />
+      <path d="M18.5 3.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" />
+      <path d="M5.5 15.5l.9 2.2 2.2.9-2.2.9-.9 2.2-.9-2.2-2.2-.9 2.2-.9z" />
+    </svg>
+  );
+}
+
+function BellIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 10a5 5 0 1 1 10 0c0 4.5 2 6 2 6H5s2-1.5 2-6" />
+      <path d="M10 18a2 2 0 0 0 4 0" />
+    </svg>
+  );
+}
+
 function BaseIcon({ children }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true">{children}</svg>;
 }
@@ -210,10 +229,36 @@ export default function HomePage() {
           <button type="button" className={styles.topbarButton} aria-label="Voltar" onClick={() => window.history.back()}><SimpleArrow /></button>
           <button type="button" className={styles.topbarButton} aria-label="Avançar" onClick={() => window.history.forward()}><SimpleArrow right /></button>
         </div>
-        <button type="button" className={styles.logoutButton} onClick={() => setLogoutPromptOpen(true)}>
-          <LogoutIcon />
-          <span>Sair</span>
-        </button>
+        <div className={styles.topbarActions}>
+          <button
+            type="button"
+            className={styles.aiButton}
+            onClick={() => {
+              setActiveNav("settings");
+              setActiveConfig("ai");
+            }}
+            title="Agente de IA para análise completa do sistema respeitando perfil e acesso"
+          >
+            <SparkIcon />
+            <span>Agente de IA</span>
+          </button>
+          <button
+            type="button"
+            className={styles.topbarButton}
+            aria-label="Notificações"
+            title="Notificações"
+            onClick={() => {
+              setActiveNav("settings");
+              setActiveConfig("notifications");
+            }}
+          >
+            <BellIcon />
+          </button>
+          <button type="button" className={styles.logoutButton} onClick={() => setLogoutPromptOpen(true)}>
+            <LogoutIcon />
+            <span>Sair</span>
+          </button>
+        </div>
       </header>
 
       <aside className={styles.sidebar}>
