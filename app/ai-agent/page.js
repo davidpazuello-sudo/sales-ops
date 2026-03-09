@@ -25,18 +25,7 @@ const historyItems = [
   "Existe risco de perda em contas enterprise?",
 ];
 
-const initialMessages = [
-  {
-    id: 1,
-    role: "assistant",
-    text: "Sou o agente de IA do SalesOps. Posso analisar o sistema respeitando o seu perfil e mostrar apenas os dados permitidos para o seu acesso.",
-  },
-  {
-    id: 2,
-    role: "assistant",
-    text: "Escolha uma sugestão ou escreva uma pergunta para começar a análise.",
-  },
-];
+const initialMessages = [];
 
 function MenuIcon() {
   return <div className={styles.hamburger} aria-hidden="true"><span /><span /><span /></div>;
@@ -105,9 +94,13 @@ export default function AIAgentPage() {
   const router = useRouter();
   const [messages, setMessages] = useState(initialMessages);
   const [inputValue, setInputValue] = useState("");
+  const [attachments, setAttachments] = useState([]);
+  const [isListening, setIsListening] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   useEffect(() => {
     function closeOnOutside(event) {
@@ -124,13 +117,45 @@ export default function AIAgentPage() {
     };
   }, []);
 
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "pt-BR";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((result) => result[0]?.transcript || "")
+        .join(" ");
+      setInputValue(transcript.trim());
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.onerror = () => {
+      setIsListening(false);
+    };
+
+    recognitionRef.current = recognition;
+  }, []);
+
   function submitQuestion(question) {
     const trimmed = question.trim();
-    if (!trimmed) return;
+    if (!trimmed && attachments.length === 0) return;
+
+    const uploadedItems = attachments.map((file) => ({
+      name: file.name,
+      type: file.type || "application/octet-stream",
+    }));
 
     setMessages((current) => [
       ...current,
-      { id: current.length + 1, role: "user", text: trimmed },
+      { id: current.length + 1, role: "user", text: trimmed || "Anexei arquivos para análise.", attachments: uploadedItems },
       {
         id: current.length + 2,
         role: "assistant",
@@ -138,11 +163,44 @@ export default function AIAgentPage() {
       },
     ]);
     setInputValue("");
+    setAttachments([]);
   }
 
   function handleSubmit(event) {
     event.preventDefault();
     submitQuestion(inputValue);
+  }
+
+  function handleFilesSelected(event) {
+    const selectedFiles = Array.from(event.target.files || []);
+    if (selectedFiles.length === 0) return;
+    setAttachments((current) => [...current, ...selectedFiles]);
+    event.target.value = "";
+  }
+
+  function removeAttachment(fileName, indexToRemove) {
+    setAttachments((current) => current.filter((file, index) => !(file.name === fileName && index === indexToRemove)));
+  }
+
+  function toggleListening() {
+    if (!recognitionRef.current) return;
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
+    setIsListening(true);
+    recognitionRef.current.start();
+  }
+
+  function startNewChat() {
+    setMessages([]);
+    setInputValue("");
+    setAttachments([]);
+    setIsListening(false);
+    recognitionRef.current?.stop?.();
   }
 
   return (
@@ -210,6 +268,9 @@ export default function AIAgentPage() {
                 <h2>Histórico</h2>
                 <p>Perguntas recentes feitas ao agente.</p>
               </div>
+              <button type="button" className={styles.newChatButton} onClick={startNewChat}>
+                Novo chat
+              </button>
               <div className={styles.historyList}>
                 {historyItems.map((item) => (
                   <button key={item} type="button" className={styles.historyItem} onClick={() => submitQuestion(item)}>
@@ -222,7 +283,6 @@ export default function AIAgentPage() {
             <section className={styles.chatPanel}>
               <div className={styles.panelHeader}>
                 <h2>Chat do agente</h2>
-                <p>Análises completas respeitando o perfil e o acesso do usuário.</p>
               </div>
 
               <div className={styles.promptRow}>
@@ -241,18 +301,47 @@ export default function AIAgentPage() {
                   >
                     <span className={styles.messageRole}>{message.role === "user" ? "Você" : "Agente IA"}</span>
                     <p>{message.text}</p>
+                    {message.attachments?.length ? (
+                      <div className={styles.messageAttachments}>
+                        {message.attachments.map((file) => (
+                          <span key={`${message.id}-${file.name}`} className={styles.attachmentChip}>
+                            {file.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
                   </article>
                 ))}
               </div>
 
               <form className={styles.chatComposer} onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(event) => setInputValue(event.target.value)}
-                  placeholder="Pergunte sobre riscos, desempenho, falhas ou oportunidades..."
-                />
-                <button type="submit">Enviar</button>
+                {attachments.length ? (
+                  <div className={styles.attachmentTray}>
+                    {attachments.map((file, index) => (
+                      <button key={`${file.name}-${index}`} type="button" className={styles.attachmentItem} onClick={() => removeAttachment(file.name, index)}>
+                        <span>{file.name}</span>
+                        <strong>Remover</strong>
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+
+                <div className={styles.composerRow}>
+                  <button type="button" className={styles.utilityButton} onClick={() => fileInputRef.current?.click()}>
+                    Anexar
+                  </button>
+                  <button type="button" className={`${styles.utilityButton} ${isListening ? styles.utilityButtonActive : ""}`.trim()} onClick={toggleListening} disabled={!recognitionRef.current}>
+                    {isListening ? "Ouvindo..." : "Microfone"}
+                  </button>
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(event) => setInputValue(event.target.value)}
+                    placeholder="Pergunte sobre riscos, desempenho, falhas ou oportunidades..."
+                  />
+                  <button type="submit">Enviar</button>
+                </div>
+                <input ref={fileInputRef} type="file" className={styles.hiddenInput} multiple onChange={handleFilesSelected} accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.webp,.txt,.ppt,.pptx" />
               </form>
             </section>
           </div>
