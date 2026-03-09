@@ -1,1 +1,34 @@
-undefined
+/* ═══════════════════════════════════════════════
+   APP SHELL
+═══════════════════════════════════════════════ */
+.appShell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  grid-template-rows: 60px 1fr;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  transition:
+    grid-template-columns var(--motion-fast) var(--ease-out),
+    background var(--motion-normal) ease,
+    color var(--motion-normal) ease;
+}
+
+.appShellCollapsed { grid-template-columns: 64px 1fr; }
+
+/* ═══════════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════════ */
+.topbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 0 0;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 60px;
+}
