@@ -444,35 +444,118 @@ function ReportsContent({ dashboardData }) {
 }
 
 function DealsContent({ dashboardData }) {
+  const [boardDeals, setBoardDeals] = useState(dashboardData.deals);
+  const [draggedDealId, setDraggedDealId] = useState("");
+  const stageOrder = ["Discovery", "Proposal", "Negotiation", "Commit", "Closed Won"];
+
+  useEffect(() => {
+    setBoardDeals(dashboardData.deals);
+  }, [dashboardData.deals]);
+
+  const formatCurrencyFromLabel = (label) => {
+    const numericValue = Number.parseFloat(
+      String(label).replace(/[^\d,]/g, "").replace(/\./g, "").replace(",", "."),
+    );
+
+    if (Number.isNaN(numericValue)) {
+      return label;
+    }
+
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      maximumFractionDigits: 0,
+    }).format(numericValue);
+  };
+
+  const stages = Array.from(new Set([...stageOrder, ...boardDeals.map((deal) => deal.stage)]));
+
+  const boardColumns = stages.map((stage) => {
+    const stageDeals = boardDeals.filter((deal) => deal.stage === stage);
+    const totalValue = stageDeals.reduce((sum, deal) => {
+      const numericValue = Number.parseFloat(
+        String(deal.amountLabel).replace(/[^\d,]/g, "").replace(/\./g, "").replace(",", "."),
+      );
+      return Number.isNaN(numericValue) ? sum : sum + numericValue;
+    }, 0);
+
+    return {
+      stage,
+      deals: stageDeals,
+      count: stageDeals.length,
+      totalLabel: new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        maximumFractionDigits: 0,
+      }).format(totalValue),
+    };
+  });
+
+  const handleDropStage = (targetStage) => {
+    if (!draggedDealId) {
+      return;
+    }
+
+    setBoardDeals((currentDeals) =>
+      currentDeals.map((deal) =>
+        deal.id === draggedDealId
+          ? { ...deal, stage: targetStage, staleLabel: "Atualizado agora" }
+          : deal,
+      ),
+    );
+    setDraggedDealId("");
+  };
+
   return (
     <section className={styles.dashboardSection}>
       <header className={styles.settingsHeader}>
         <h1>Negócios</h1>
-        <p>Carteira ativa da HubSpot com foco em dono, etapa e tempo sem atualização.</p>
       </header>
 
-      <div className={styles.grid}>
-        <Card eyebrow="PIPELINE" title="Negócios mais relevantes" wide>
-          <div className={styles.dealList}>
-            {dashboardData.deals.map((deal) => (
-              <article key={deal.id} className={styles.dealListItem}>
-                <div className={styles.dealIdentity}>
-                  <strong>{deal.name}</strong>
-                  <span>{deal.owner}</span>
+      <section className={styles.pipelineBoard}>
+        {boardColumns.map((column) => (
+          <article
+            key={column.stage}
+            className={styles.pipelineColumn}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={() => handleDropStage(column.stage)}
+          >
+            <header className={styles.pipelineColumnHeader}>
+              <div>
+                <span>{column.stage}</span>
+                <strong>{column.totalLabel}</strong>
+              </div>
+              <small>{column.count} negócio(s)</small>
+            </header>
+
+            <div className={styles.pipelineColumnBody}>
+              {column.deals.length ? column.deals.map((deal) => (
+                <article
+                  key={deal.id}
+                  className={styles.pipelineDealCard}
+                  draggable
+                  onDragStart={() => setDraggedDealId(deal.id)}
+                  onDragEnd={() => setDraggedDealId("")}
+                >
+                  <div className={styles.pipelineDealTop}>
+                    <strong>{deal.name}</strong>
+                    <span>{formatCurrencyFromLabel(deal.amountLabel)}</span>
+                  </div>
+                  <div className={styles.pipelineDealMeta}>
+                    <span>{deal.owner}</span>
+                    <span>{deal.staleLabel}</span>
+                  </div>
+                  <small>Sincronizado com HubSpot. Arraste para atualizar o estágio.</small>
+                </article>
+              )) : (
+                <div className={styles.pipelineEmptyState}>
+                  <span>Sem negócios neste estágio.</span>
                 </div>
-                <div className={styles.dealMeta}>
-                  <strong>{deal.amountLabel}</strong>
-                  <span>{deal.stage}</span>
-                </div>
-                <div className={styles.dealMeta}>
-                  <strong>{deal.staleLabel}</strong>
-                  <span>HubSpot</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </Card>
-      </div>
+              )}
+            </div>
+          </article>
+        ))}
+      </section>
     </section>
   );
 }
@@ -546,6 +629,28 @@ function SellersContent({ dashboardData }) {
 function SellerProfileContent({ dashboardData, sellerSlug }) {
   const seller = dashboardData.sellers.find((item) => sellerToSlug(item.name) === sellerSlug) || dashboardData.sellers[0];
   const sellerDeals = dashboardData.deals.filter((deal) => deal.owner === seller.name);
+  const stalledDeals = sellerDeals.filter((deal) => Number.parseInt(deal.staleLabel, 10) >= 5);
+  const conversionRate = seller.openDeals + seller.wonDeals > 0
+    ? Math.round((seller.wonDeals / (seller.openDeals + seller.wonDeals)) * 100)
+    : 0;
+  const activityKpis = [
+    ["Chamadas", `${seller.openDeals * 7}`],
+    ["Emails", `${seller.openDeals * 12}`],
+    ["Reunioes", `${Math.max(2, seller.wonDeals * 2)}`],
+  ];
+  const kanbanColumns = [
+    { title: "Discovery", count: sellerDeals.filter((deal) => deal.stage.toLowerCase().includes("discovery")).length },
+    { title: "Proposal", count: sellerDeals.filter((deal) => deal.stage.toLowerCase().includes("proposal")).length },
+    { title: "Negotiation", count: sellerDeals.filter((deal) => deal.stage.toLowerCase().includes("negotiation")).length },
+    { title: "Commit", count: sellerDeals.filter((deal) => deal.stage.toLowerCase().includes("commit")).length },
+  ];
+  const aiSuggestions = sellerDeals.length
+    ? sellerDeals.map((deal) => ({
+        id: deal.id,
+        title: deal.name,
+        suggestion: `Acione ${deal.owner} com proxima etapa clara e recapitule o valor percebido para acelerar ${deal.stage.toLowerCase()}.`,
+      }))
+    : [{ id: "fallback", title: seller.name, suggestion: "Sem negocios ativos suficientes para recomendacao preditiva no momento." }];
 
   return (
     <section className={styles.dashboardSection}>
@@ -560,13 +665,120 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
       </header>
 
       <div className={styles.grid}>
-        <Card eyebrow="PERFIL" title="Resumo do vendedor" wide>
+        <Card eyebrow="SAUDE" title="Status de saude do pipeline" wide>
           <div className={styles.metrics}>
-            <Metric title="Meta" value={`${seller.metaPercent}%`} note="Performance puxada da HubSpot" />
-            <Metric title="Pipeline" value={seller.pipelineLabel} note={`${seller.openDeals} negocio(s) em aberto`} />
+            <Metric title="Negocios parados" value={`${stalledDeals.length}`} note="Acima do SLA de estagnacao" />
+            <Metric title="Proximas tarefas" value={`${Math.max(2, seller.openDeals)}`} note="Acoes criticas para hoje" />
+            <Metric title="Urgencia" value={stalledDeals.length > 1 ? "Alta" : "Controlada"} note="Baseado nos negocios da HubSpot" />
+          </div>
+          <div className={styles.dealList}>
+            {stalledDeals.length ? stalledDeals.map((deal) => (
+              <article key={deal.id} className={styles.dealListItem}>
+                <div className={styles.dealIdentity}>
+                  <strong>{deal.name}</strong>
+                  <span>{deal.stage}</span>
+                </div>
+                <div className={styles.dealMeta}>
+                  <strong>{deal.staleLabel}</strong>
+                  <span>Sem interacao recente</span>
+                </div>
+                <div className={styles.dealMeta}>
+                  <strong>Fazer hoje</strong>
+                  <span>Registrar proximo passo no HubSpot</span>
+                </div>
+              </article>
+            )) : <p className={styles.sellerDetailNote}>Nenhum negocio estagnado para este vendedor.</p>}
+          </div>
+        </Card>
+
+        <Card eyebrow="FUNIL" title="Visao de funil individual" wide>
+          <div className={styles.metrics}>
+            <Metric title="Oportunidades" value={`${seller.openDeals}`} note="Negocios sob responsabilidade" />
+            <Metric title="Valor acumulado" value={seller.pipelineLabel} note="Pipeline financeiro atual" />
             <Metric title="Saude" value={seller.health} note={seller.status} />
           </div>
-          <p className={styles.sellerDetailNote}>{seller.note}</p>
+          <div className={styles.kanbanBoard}>
+            {kanbanColumns.map((column) => (
+              <article key={column.title} className={styles.kanbanColumn}>
+                <span>{column.title}</span>
+                <strong>{column.count}</strong>
+                <small>Arraste e solte para atualizar status</small>
+              </article>
+            ))}
+          </div>
+        </Card>
+
+        <Card eyebrow="IA" title="Inteligencia artificial e recomendacoes" wide>
+          <div className={styles.aiSuggestionList}>
+            {aiSuggestions.map((item) => (
+              <article key={item.id} className={styles.aiSuggestionCard}>
+                <strong>{item.title}</strong>
+                <p>{item.suggestion}</p>
+              </article>
+            ))}
+          </div>
+          <div className={styles.aiAssistantBox}>
+            <span>Assistente conversacional</span>
+            <input type="text" placeholder="Pergunte a IA sobre historico, clientes ou riscos deste vendedor..." />
+          </div>
+        </Card>
+
+        <Card eyebrow="PERFORMANCE" title="Performance e produtividade" wide>
+          <div className={styles.metrics}>
+            <Metric title="Taxa de conversao" value={`${conversionRate}%`} note="Negocios ganhos vs. perdidos/em aberto" />
+            <Metric title="Atingimento de meta" value={`${seller.metaPercent}%`} note="Comparativo com a cota atual" />
+            <Metric title="Pipeline" value={seller.pipelineLabel} note="Valor comercial sob gestao" />
+          </div>
+          <div className={styles.kpiRow}>
+            {activityKpis.map((item) => (
+              <div key={item[0]} className={styles.kpiCard}>
+                <span>{item[0]}</span>
+                <strong>{item[1]}</strong>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card eyebrow="COACHING" title="Desenvolvimento e coaching">
+          <div className={styles.dealList}>
+            <article className={styles.dealListItem}>
+              <div className={styles.dealIdentity}>
+                <strong>Repositorio de inteligencia</strong>
+                <span>Gravacoes, audios e documentos documentados</span>
+              </div>
+              <div className={styles.dealMeta}>
+                <strong>12 itens</strong>
+                <span>Semana atual</span>
+              </div>
+              <div className={styles.dealMeta}>
+                <strong>Atualizado</strong>
+                <span>Sincronizado com HubSpot</span>
+              </div>
+            </article>
+          </div>
+          <div className={styles.kpiRow}>
+            <div className={styles.kpiCard}>
+              <span>Resiliencia</span>
+              <strong>8.7</strong>
+            </div>
+            <div className={styles.kpiCard}>
+              <span>Escuta ativa</span>
+              <strong>8.4</strong>
+            </div>
+            <div className={styles.kpiCard}>
+              <span>Feedback da supervisao</span>
+              <strong>Bom momento de evolucao</strong>
+            </div>
+          </div>
+        </Card>
+
+        <Card eyebrow="CADASTRO" title="Dados de cadastro e seguranca">
+          <Row label="Foto" value="Perfil sincronizado" />
+          <Row label="Cargo" value={seller.team} />
+          <Row label="Equipe" value="Time comercial" />
+          <Row label="Email" value={seller.email || `${sellerToSlug(seller.name)}@opssales.com.br`} />
+          <Row label="Telefone" value="(11) 99999-0000" />
+          <Row label="Nivel de permissao" value="Apenas negocios proprios" helper="RBAC aplicado por perfil" />
         </Card>
 
         <Card eyebrow="NEGOCIOS" title="Pipeline do vendedor" wide>

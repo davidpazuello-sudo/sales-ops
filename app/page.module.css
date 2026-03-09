@@ -645,9 +645,9 @@
 
 .sellerPageHeader {
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  gap: 18px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
 }
 
 .sellerPageHeader .settingsHeader p {
@@ -659,7 +659,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 4px;
 }
 
 .sellerFilterBox span {
@@ -816,6 +815,234 @@
   color: var(--muted);
   font-size: calc(13px * var(--font-scale));
   line-height: 1.6;
+}
+
+.pipelineBoard {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(220px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.pipelineColumn {
+  display: grid;
+  gap: 12px;
+  min-height: 520px;
+  padding: calc(14px * var(--density-scale));
+  border-radius: calc(var(--surface-radius) + 2px);
+  background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+  box-shadow: var(--surface-shadow);
+}
+
+.pipelineColumnHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pipelineColumnHeader div {
+  display: grid;
+  gap: 6px;
+}
+
+.pipelineColumnHeader span,
+.pipelineDealMeta span,
+.pipelineEmptyState span {
+  color: var(--muted);
+  font-size: calc(12px * var(--font-scale));
+}
+
+.pipelineColumnHeader strong {
+  color: var(--heading);
+  font-size: calc(18px * var(--font-scale));
+}
+
+.pipelineColumnHeader small {
+  color: var(--accent);
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 700;
+}
+
+.pipelineColumnBody {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.pipelineDealCard {
+  display: grid;
+  gap: 10px;
+  padding: calc(14px * var(--density-scale));
+  border-radius: 18px;
+  background: var(--panel);
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+  cursor: grab;
+  transition:
+    transform var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease,
+    border-color var(--motion-fast) ease;
+}
+
+.pipelineDealCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(17, 32, 58, 0.07);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+}
+
+.pipelineDealCard:active {
+  cursor: grabbing;
+}
+
+.pipelineDealTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pipelineDealTop strong {
+  color: var(--heading);
+  font-size: calc(14px * var(--font-scale));
+  line-height: 1.45;
+}
+
+.pipelineDealTop span {
+  color: var(--accent);
+  font-size: calc(13px * var(--font-scale));
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.pipelineDealMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pipelineDealCard small {
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  line-height: 1.5;
+}
+
+.pipelineEmptyState {
+  display: grid;
+  place-items: center;
+  min-height: 110px;
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px dashed color-mix(in srgb, var(--border) 88%, transparent);
+  background: color-mix(in srgb, var(--panel) 36%, var(--panel-soft));
+  text-align: center;
+}
+
+.kanbanBoard {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.kanbanColumn {
+  display: grid;
+  gap: 8px;
+  padding: calc(16px * var(--density-scale));
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+}
+
+.kanbanColumn span,
+.aiAssistantBox span,
+.kpiCard span {
+  color: var(--muted);
+  font-size: calc(12px * var(--font-scale));
+  font-weight: 700;
+}
+
+.kanbanColumn strong,
+.kpiCard strong {
+  color: var(--heading);
+  font-size: calc(24px * var(--font-scale));
+}
+
+.kanbanColumn small {
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  line-height: 1.5;
+}
+
+.aiSuggestionList {
+  display: grid;
+  gap: 12px;
+}
+
+.aiSuggestionCard {
+  display: grid;
+  gap: 8px;
+  padding: calc(16px * var(--density-scale));
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+}
+
+.aiSuggestionCard strong {
+  color: var(--heading);
+  font-size: calc(14px * var(--font-scale));
+}
+
+.aiSuggestionCard p {
+  margin: 0;
+  color: var(--muted);
+  font-size: calc(13px * var(--font-scale));
+  line-height: 1.65;
+}
+
+.aiAssistantBox {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+  padding: calc(16px * var(--density-scale));
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--panel) 40%, var(--panel-soft));
+}
+
+.aiAssistantBox input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.aiAssistantBox input:focus {
+  border-color: rgba(222, 131, 0, 0.58);
+  box-shadow: 0 0 0 4px rgba(222, 131, 0, 0.08);
+}
+
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.kpiCard {
+  display: grid;
+  gap: 8px;
+  padding: calc(16px * var(--density-scale));
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
 }
 
 .dealList {
@@ -1205,13 +1432,11 @@
   .grid,
   .settingsLayout,
   .previewPanel,
-  .sellerProfilesGrid {
+  .sellerProfilesGrid,
+  .pipelineBoard,
+  .kanbanBoard,
+  .kpiRow {
     grid-template-columns: 1fr;
-  }
-
-  .sellerPageHeader {
-    flex-direction: column;
-    align-items: stretch;
   }
 
   .sellerFilterBox {
