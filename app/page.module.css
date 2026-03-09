@@ -320,9 +320,10 @@
 .profileBox {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   width: 100%;
-  padding: calc(8px * var(--density-scale)) calc(8px * var(--density-scale)) calc(6px * var(--density-scale));
+  min-height: 54px;
+  padding: calc(12px * var(--density-scale)) calc(10px * var(--density-scale));
   border: 0;
   border-top: 1px solid var(--border);
   background: var(--sidebar);
@@ -339,9 +340,9 @@
 }
 
 .profileAvatar {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
   display: grid;
   place-items: center;
   background: var(--accent);
@@ -349,20 +350,20 @@
   background-repeat: no-repeat;
   background-size: cover;
   color: #fff;
-  font-size: calc(11px * var(--font-scale));
+  font-size: calc(12px * var(--font-scale));
   font-weight: 800;
 }
 
 .profileName {
   color: var(--heading);
-  font-size: calc(10px * var(--font-scale));
+  font-size: calc(11px * var(--font-scale));
   font-weight: 800;
 }
 
 .profileRole {
-  margin-top: 1px;
+  margin-top: 2px;
   color: var(--muted);
-  font-size: calc(9px * var(--font-scale));
+  font-size: calc(10px * var(--font-scale));
 }
 
 .content {
@@ -819,6 +820,11 @@
   letter-spacing: -0.02em;
 }
 
+.sellerDetailHeaderBlock {
+  display: grid;
+  justify-items: flex-start;
+}
+
 .sellerDetailIdentity .settingsHeader p {
   margin-top: 6px;
   font-size: calc(12px * var(--font-scale));
@@ -828,6 +834,7 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  margin-top: 10px;
 }
 
 .primaryActionButton,
@@ -847,6 +854,9 @@
 }
 
 .primaryActionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border: 0;
   background: linear-gradient(135deg, var(--accent), #f3a43d);
   color: #fff;
@@ -862,6 +872,17 @@
 .primaryActionButton:hover,
 .secondaryActionButton:hover {
   transform: translateY(-1px);
+}
+
+.primaryActionButton svg,
+.secondaryActionButton svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .sellerDetailAvatar {
@@ -972,6 +993,96 @@
 .meetingField textarea:focus {
   border-color: rgba(222, 131, 0, 0.58);
   box-shadow: 0 0 0 4px rgba(222, 131, 0, 0.08);
+}
+
+.meetingAttachmentsBlock {
+  display: grid;
+  gap: 10px;
+  padding: calc(14px * var(--density-scale));
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+}
+
+.meetingAttachmentsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.meetingAttachmentsHeader span {
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 700;
+}
+
+.meetingAttachmentButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--heading);
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.meetingAttachmentList {
+  display: grid;
+  gap: 8px;
+}
+
+.meetingAttachmentItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--panel);
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+}
+
+.meetingAttachmentMeta {
+  display: grid;
+  gap: 4px;
+}
+
+.meetingAttachmentMeta strong {
+  color: var(--heading);
+  font-size: calc(12px * var(--font-scale));
+}
+
+.meetingAttachmentMeta span,
+.meetingAttachmentHint {
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  line-height: 1.55;
+}
+
+.meetingAttachmentHint {
+  margin: 0;
+}
+
+.meetingAttachmentRemove {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.meetingFormActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
 }
 
 .meetingNotesList {

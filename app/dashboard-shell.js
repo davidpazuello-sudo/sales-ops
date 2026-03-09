@@ -347,6 +347,19 @@ function BellIcon() {
   );
 }
 
+function MeetingIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 4v3" />
+      <path d="M17 4v3" />
+      <rect x="4" y="6.5" width="16" height="13.5" rx="2" />
+      <path d="M4 10h16" />
+      <path d="M8 14h3" />
+      <path d="M13 14h3" />
+    </svg>
+  );
+}
+
 function BaseIcon({ children }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true">{children}</svg>;
 }
@@ -676,10 +689,34 @@ function SellerMeetingsContent({ dashboardData, sellerSlug }) {
 
 function SellerMeetingDetailContent({ dashboardData, sellerSlug, meetingId }) {
   const router = useRouter();
+  const [meetingAttachments, setMeetingAttachments] = useState([]);
   const seller = dashboardData.sellers.find((item) => sellerToSlug(item.name) === sellerSlug) || dashboardData.sellers[0];
   const meetings = getInternalMeetingsForSeller(seller);
   const meeting = meetings.find((item) => meetingToSlug(item.id) === meetingId) || meetings[0];
   const isNewMeeting = meetingId === "nova";
+
+  const handleMeetingAttachments = (event) => {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) {
+      return;
+    }
+
+    setMeetingAttachments((current) => [
+      ...current,
+      ...files.map((file) => ({
+        id: `${file.name}-${file.size}-${file.lastModified}`,
+        name: file.name,
+        type: file.type || "application/octet-stream",
+        sizeLabel: `${Math.max(1, Math.round(file.size / 1024))} KB`,
+      })),
+    ]);
+
+    event.target.value = "";
+  };
+
+  const removeMeetingAttachment = (attachmentId) => {
+    setMeetingAttachments((current) => current.filter((attachment) => attachment.id !== attachmentId));
+  };
 
   return (
     <section className={styles.dashboardSection}>
@@ -725,6 +762,53 @@ function SellerMeetingDetailContent({ dashboardData, sellerSlug, meetingId }) {
                 <span>Resumo</span>
                 <textarea rows="5" placeholder="Descreva objetivo, contexto e decisoes da reuniao." />
               </label>
+              <div className={styles.meetingAttachmentsBlock}>
+                <div className={styles.meetingAttachmentsHeader}>
+                  <span>Anexos</span>
+                  <label className={styles.meetingAttachmentButton}>
+                    <input
+                      type="file"
+                      accept=".pdf,.doc,.docx,.txt,.rtf,.md,.mp3,.wav,.m4a,.ogg,.aac,.webm,audio/*"
+                      multiple
+                      className={styles.hiddenFileInput}
+                      onChange={handleMeetingAttachments}
+                    />
+                    Anexar documento ou audio
+                  </label>
+                </div>
+                {meetingAttachments.length ? (
+                  <div className={styles.meetingAttachmentList}>
+                    {meetingAttachments.map((attachment) => (
+                      <div key={attachment.id} className={styles.meetingAttachmentItem}>
+                        <div className={styles.meetingAttachmentMeta}>
+                          <strong>{attachment.name}</strong>
+                          <span>{attachment.sizeLabel}</span>
+                        </div>
+                        <button
+                          type="button"
+                          className={styles.meetingAttachmentRemove}
+                          onClick={() => removeMeetingAttachment(attachment.id)}
+                        >
+                          Remover
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className={styles.meetingAttachmentHint}>
+                    Aceita PDF, DOC, TXT, MD e arquivos de audio como MP3, WAV e M4A.
+                  </p>
+                )}
+              </div>
+              <div className={styles.meetingFormActions}>
+                <button
+                  type="button"
+                  className={styles.primaryActionButton}
+                  onClick={() => router.push(`/vendedores/${sellerSlug}/reunioes`)}
+                >
+                  Salvar reuniao
+                </button>
+              </div>
             </div>
           ) : (
             <div className={styles.meetingDetailStack}>
@@ -901,19 +985,20 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
       <header className={styles.sellerDetailHeader}>
         <div className={styles.sellerDetailIdentity}>
           <div className={styles.sellerDetailAvatar}>{seller.initials}</div>
-          <div className={styles.settingsHeader}>
+          <div className={`${styles.settingsHeader} ${styles.sellerDetailHeaderBlock}`.trim()}>
             <h1>{seller.name}</h1>
             <p>{seller.team}</p>
+            <div className={styles.sellerMeetingActions}>
+              <button
+                type="button"
+                className={styles.primaryActionButton}
+                onClick={() => router.push(`/vendedores/${sellerSlug}/reunioes`)}
+              >
+                <MeetingIcon />
+                <span>Reunioes internas</span>
+              </button>
+            </div>
           </div>
-        </div>
-        <div className={styles.sellerMeetingActions}>
-          <button
-            type="button"
-            className={styles.primaryActionButton}
-            onClick={() => router.push(`/vendedores/${sellerSlug}/reunioes`)}
-          >
-            Reunioes internas
-          </button>
         </div>
       </header>
 
