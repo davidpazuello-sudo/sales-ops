@@ -1,9 +1,9 @@
 :root {
-  --bg: #f3f4f7;
+  --bg: #f6f7fa;
   --panel: #ffffff;
   --sidebar: #fcfcfd;
-  --border: #dfe3ea;
-  --text: #243247;
+  --border: #e2e6ee;
+  --text: #25344b;
 }
 
 * {
@@ -19,7 +19,9 @@ body {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button {
