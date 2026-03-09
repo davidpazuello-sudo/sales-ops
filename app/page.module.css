@@ -958,3 +958,459 @@
     padding-bottom: 10px;
   }
 }
+
+.dealsFilters,
+.sellerFilterBox,
+.meetingDetailActions,
+.sellerMeetingActions,
+.logoutActions,
+.optionPills,
+.kpiRow,
+.tags,
+.sellerStats,
+.profileStandalone,
+.dealList,
+.meetingsList,
+.meetingAttachmentList,
+.stageModalList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.meetingAttachmentsHeader,
+.meetingFieldRow,
+.meetingFormActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dealsFilterField,
+.meetingField,
+.optionGroup,
+.previewCard,
+.meetingAudioPanel,
+.meetingAiPanel,
+.meetingComposer,
+.meetingAttachmentsBlock,
+.usage,
+.sellerInsightBlock,
+.sellerProfileCard {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: var(--surface-shadow);
+}
+
+.dealsFilterField,
+.meetingField,
+.optionGroup {
+  min-width: 220px;
+  flex: 1 1 220px;
+}
+
+.dealsFilterField span,
+.meetingField span,
+.optionGroupLabel,
+.usageTop,
+.sellerInsightLabel,
+.meetingAttachmentHint,
+.meetingMeta {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.dealsFilterField select,
+.meetingField input,
+.meetingField textarea,
+.meetingComposer textarea,
+.meetingAudioPlayer {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel-soft);
+  color: var(--text);
+}
+
+.meetingField textarea,
+.meetingComposer textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.optionPill {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel-soft);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.optionPillActive,
+.toggleButtonActive,
+.primaryActionButton,
+.meetingPrimary {
+  background: var(--heading);
+  color: #fff;
+  border-color: var(--heading);
+}
+
+.preferenceTable {
+  display: grid;
+  gap: 10px;
+}
+
+.preferenceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.preferenceRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.preferenceCopy {
+  display: grid;
+  gap: 4px;
+}
+
+.preferenceCopy span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.toggleButton {
+  width: 50px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel-soft);
+  position: relative;
+  cursor: pointer;
+}
+
+.toggleButton span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform var(--motion-fast);
+}
+
+.toggleButtonActive span {
+  transform: translateX(20px);
+}
+
+.tags span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.usage {
+  gap: 12px;
+}
+
+.usageBar {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--panel-soft);
+  overflow: hidden;
+}
+
+.usageBar::after {
+  content: "";
+  display: block;
+  width: 68%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, #7c3aed 100%);
+}
+
+.pipelineBoard,
+.sellerProfilesGrid,
+.meetingDetailStack,
+.sellerProfileContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.pipelineColumn,
+.previewPanel,
+.stageModal,
+.sellerDetailHeaderBlock {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: var(--surface-shadow);
+}
+
+.pipelineColumnHeader,
+.pipelineDealTop,
+.stageModalHeader,
+.sellerDetailHeader,
+.sellerProfileTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.pipelineColumnBody {
+  display: grid;
+  gap: 12px;
+  min-height: 140px;
+}
+
+.pipelineDealCard,
+.dealListItem,
+.meetingRow,
+.meetingAttachmentItem,
+.stageModalItem,
+.sellerDealListItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel-soft);
+}
+
+.pipelineDealCard,
+.dealListItem,
+.meetingRow,
+.stageModalItem {
+  align-items: center;
+}
+
+.dealIdentity,
+.dealMeta,
+.sellerIdentity,
+.meetingAttachmentMeta,
+.sellerDetailIdentity {
+  display: grid;
+  gap: 4px;
+}
+
+.dealIdentity span,
+.dealMeta span,
+.sellerIdentity span,
+.meetingAttachmentMeta span,
+.sellerDetailIdentity span,
+.sellerNote,
+.sellerDetailNote,
+.meetingAttachmentHint {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.pipelineDealMeta,
+.pipelineEmptyState,
+.sellerInsightBlock,
+.meetingAttachmentRemove {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.pipelineEmptyState {
+  display: grid;
+  place-items: center;
+  min-height: 100px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+}
+
+.matrixCols {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.kpiCard,
+.previewCard,
+.sellerInsightBlock {
+  flex: 1 1 180px;
+}
+
+.kpiCard {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+}
+
+.kpiCard span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.kpiCard strong {
+  color: var(--heading);
+  font-size: 1rem;
+}
+
+.primaryActionButton,
+.secondaryActionButton,
+.meetingAttachmentButton,
+.meetingAttachmentRemove {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primaryActionButton,
+.meetingPrimary,
+.meetingAttachmentButton {
+  border: none;
+  background: var(--heading);
+  color: #fff;
+}
+
+.secondaryActionButton,
+.meetingAttachmentRemove {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.pipelineStageChart {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.pipelineStageBarCard {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel-soft);
+  cursor: pointer;
+}
+
+.pipelineStageBarWrap {
+  height: 120px;
+  display: flex;
+  align-items: end;
+}
+
+.pipelineStageBar {
+  width: 100%;
+  border-radius: 12px 12px 6px 6px;
+  background: linear-gradient(180deg, var(--accent) 0%, #7c3aed 100%);
+}
+
+.stageModalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 17, 32, 0.35);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 160;
+}
+
+.stageModal {
+  width: min(100%, 720px);
+}
+
+.sellerAvatar,
+.sellerDetailAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.sellerPageHeader,
+.sellerDetailHeader,
+.meetingDetailActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.profileStandalone,
+.sellerStats,
+.sellerProfileMeetingActions {
+  display: grid;
+  gap: 14px;
+}
+
+@media (max-width: 860px) {
+  .pipelineBoard,
+  .sellerProfilesGrid,
+  .meetingDetailStack,
+  .sellerProfileContainer,
+  .pipelineStageChart {
+    grid-template-columns: 1fr;
+  }
+
+  .pipelineDealCard,
+  .dealListItem,
+  .meetingRow,
+  .meetingAttachmentItem,
+  .stageModalItem,
+  .sellerDealListItem,
+  .sellerPageHeader,
+  .sellerDetailHeader,
+  .meetingDetailActions,
+  .pipelineColumnHeader,
+  .stageModalHeader,
+  .sellerProfileTop {
+    flex-direction: column;
+  }
+
+  .dealsFilters,
+  .sellerFilterBox,
+  .meetingDetailActions,
+  .sellerMeetingActions,
+  .kpiRow,
+  .tags,
+  .dealList,
+  .meetingsList {
+    flex-direction: column;
+  }
+}
