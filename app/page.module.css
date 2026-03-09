@@ -788,33 +788,54 @@
   line-height: 1.5;
 }
 
+.sellerInsightBlock {
+  display: grid;
+  gap: 6px;
+}
+
+.sellerInsightLabel {
+  color: var(--muted);
+  font-size: calc(12px * var(--font-scale));
+  font-weight: 700;
+}
+
 .sellerDetailHeader {
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .sellerDetailIdentity {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+}
+
+.sellerDetailIdentity .settingsHeader h1 {
+  font-size: calc(21px * var(--font-scale));
+  letter-spacing: -0.02em;
+}
+
+.sellerDetailIdentity .settingsHeader p {
+  margin-top: 6px;
+  font-size: calc(12px * var(--font-scale));
 }
 
 .sellerDetailAvatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
   display: grid;
   place-items: center;
   background: linear-gradient(135deg, var(--accent), #f3a43d);
   color: #fff;
-  font-size: calc(20px * var(--font-scale));
+  font-size: calc(16px * var(--font-scale));
   font-weight: 800;
 }
 
 .sellerDetailNote {
-  margin: 18px 0 0;
+  margin: 12px 0 0;
   color: var(--muted);
-  font-size: calc(13px * var(--font-scale));
-  line-height: 1.6;
+  font-size: calc(12px * var(--font-scale));
+  line-height: 1.55;
 }
 
 .pipelineBoard {
@@ -944,50 +965,50 @@
 .pipelineStageChart {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
   align-items: end;
-  margin-top: 18px;
-  padding: calc(18px * var(--density-scale));
-  border-radius: 20px;
+  margin-top: 14px;
+  padding: calc(14px * var(--density-scale));
+  border-radius: 16px;
   background: linear-gradient(180deg, var(--panel), var(--panel-soft));
   border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
 }
 
 .pipelineStageBarCard {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   justify-items: center;
 }
 
 .pipelineStageBarWrap {
   width: 100%;
-  height: 180px;
+  height: 132px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding: 12px 0;
-  border-radius: 16px;
+  padding: 10px 0;
+  border-radius: 12px;
   background:
     linear-gradient(to top, color-mix(in srgb, var(--border) 70%, transparent) 1px, transparent 1px);
-  background-size: 100% 36px;
+  background-size: 100% 28px;
 }
 
 .pipelineStageBar {
-  width: min(72px, 72%);
+  width: min(52px, 64%);
   min-height: 16px;
-  border-radius: 16px 16px 6px 6px;
+  border-radius: 12px 12px 4px 4px;
   background: linear-gradient(180deg, #f3ae43, var(--accent));
-  box-shadow: 0 12px 24px rgba(222, 131, 0, 0.18);
+  box-shadow: 0 8px 18px rgba(222, 131, 0, 0.16);
 }
 
 .pipelineStageBarCard strong {
   color: var(--heading);
-  font-size: calc(18px * var(--font-scale));
+  font-size: calc(15px * var(--font-scale));
 }
 
 .pipelineStageBarCard span {
   color: var(--muted);
-  font-size: calc(12px * var(--font-scale));
+  font-size: calc(11px * var(--font-scale));
   font-weight: 700;
   text-align: center;
 }
@@ -996,14 +1017,14 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 18px;
+  margin-top: 14px;
 }
 
 .kanbanColumn {
   display: grid;
-  gap: 8px;
-  padding: calc(16px * var(--density-scale));
-  border-radius: 18px;
+  gap: 6px;
+  padding: calc(12px * var(--density-scale));
+  border-radius: 14px;
   background: linear-gradient(180deg, var(--panel), var(--panel-soft));
   border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
 }
@@ -1012,19 +1033,19 @@
 .aiAssistantBox span,
 .kpiCard span {
   color: var(--muted);
-  font-size: calc(12px * var(--font-scale));
+  font-size: calc(11px * var(--font-scale));
   font-weight: 700;
 }
 
 .kanbanColumn strong,
 .kpiCard strong {
   color: var(--heading);
-  font-size: calc(24px * var(--font-scale));
+  font-size: calc(18px * var(--font-scale));
 }
 
 .kanbanColumn small {
   color: var(--muted);
-  font-size: calc(11px * var(--font-scale));
+  font-size: calc(10px * var(--font-scale));
   line-height: 1.5;
 }
 
@@ -1084,14 +1105,14 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 18px;
+  margin-top: 14px;
 }
 
 .kpiCard {
   display: grid;
-  gap: 8px;
-  padding: calc(16px * var(--density-scale));
-  border-radius: 18px;
+  gap: 6px;
+  padding: calc(12px * var(--density-scale));
+  border-radius: 14px;
   background: linear-gradient(180deg, var(--panel), var(--panel-soft));
   border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
 }
@@ -1099,16 +1120,16 @@
 .dealList {
   display: grid;
   gap: 12px;
-  margin-top: 18px;
+  margin-top: 14px;
 }
 
 .dealListItem {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 0.8fr);
-  gap: 14px;
+  gap: 12px;
   align-items: center;
-  padding: calc(14px * var(--density-scale)) calc(16px * var(--density-scale));
-  border-radius: 16px;
+  padding: calc(11px * var(--density-scale)) calc(13px * var(--density-scale));
+  border-radius: 13px;
   background: linear-gradient(180deg, var(--panel), var(--panel-soft));
 }
 
@@ -1122,13 +1143,13 @@
 .dealIdentity strong,
 .dealMeta strong {
   color: var(--heading);
-  font-size: calc(14px * var(--font-scale));
+  font-size: calc(12px * var(--font-scale));
 }
 
 .dealIdentity span,
 .dealMeta span {
   color: var(--muted);
-  font-size: calc(12px * var(--font-scale));
+  font-size: calc(11px * var(--font-scale));
 }
 
 .optionGroup {

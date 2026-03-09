@@ -655,7 +655,10 @@ function SellersContent({ dashboardData }) {
                   </div>
                 </div>
 
-                <p className={styles.sellerNote}>{seller.note}</p>
+                <div className={styles.sellerInsightBlock}>
+                  <span className={styles.sellerInsightLabel}>Analise da IA</span>
+                  <p className={styles.sellerNote}>{seller.note}</p>
+                </div>
               </article>
             </button>
           );
