@@ -231,6 +231,10 @@ export default function AIAgentPage() {
     recognitionRef.current?.stop?.();
   }
 
+  function openMainView(view) {
+    router.push(`/?view=${view}`);
+  }
+
   return (
     <main className={`${styles.appShell} ${collapsed ? styles.appShellCollapsed : ""}`.trim()}>
       <header className={styles.topbar}>
@@ -263,7 +267,7 @@ export default function AIAgentPage() {
           <div className={styles.logoRow}><span className={styles.logoDark}>SALES</span><span className={styles.logoAccent}>OPS</span></div>
           <nav className={styles.navigation} aria-label="Principal">
             {navItems.map((item) => (
-              <button key={item.id} type="button" onClick={() => router.push("/")} className={styles.navItem} title={collapsed ? item.label : undefined}>
+              <button key={item.id} type="button" onClick={() => openMainView(item.id)} className={styles.navItem} title={collapsed ? item.label : undefined}>
                 <span className={styles.navIcon}>{getNavIcon(item.id)}</span>
                 <span className={styles.navLabel}>{item.label}</span>
               </button>
@@ -271,11 +275,11 @@ export default function AIAgentPage() {
           </nav>
         </div>
         <div>
-          <button type="button" onClick={() => router.push("/")} className={`${styles.navItem} ${styles.settingsItem}`.trim()} title={collapsed ? "Configurações" : undefined}>
+          <button type="button" onClick={() => openMainView("settings")} className={`${styles.navItem} ${styles.settingsItem}`.trim()} title={collapsed ? "Configurações" : undefined}>
             <span className={styles.navIcon}><SparkIcon /></span>
             <span className={styles.navLabel}>Configurações</span>
           </button>
-          <button type="button" className={styles.profileBox} onClick={() => router.push("/")}>
+          <button type="button" className={styles.profileBox} onClick={() => openMainView("profile")}>
             <div className={styles.profileAvatar}>?</div>
             <div className={styles.profileText}><div className={styles.profileName}>Usuário</div><div className={styles.profileRole}>Cargo</div></div>
           </button>

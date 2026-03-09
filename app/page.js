@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 
 const STORAGE_KEY = "salesops-personalization";
@@ -120,6 +120,45 @@ const sellerAgendaRows = [
   ["1:1 de coaching", "Hoje, 15:00", "Lucas Prado"],
   ["Revisao de forecast", "Hoje, 17:30", "Squad Enterprise"],
   ["Treinamento de objecoes", "Amanha, 09:00", "Time Inside Sales"],
+];
+
+const sellerProfiles = [
+  {
+    name: "Ana Souza",
+    role: "Enterprise",
+    initials: "AS",
+    performance: "118%",
+    pipeline: "R$ 184k",
+    status: "Estavel",
+    note: "Melhor ritmo de fechamento do time nas ultimas 2 semanas.",
+  },
+  {
+    name: "Carlos Lima",
+    role: "Mid-market",
+    initials: "CL",
+    performance: "103%",
+    pipeline: "R$ 161k",
+    status: "Aquecendo",
+    note: "Bom volume de reunioes e forecast consistente.",
+  },
+  {
+    name: "Marina Costa",
+    role: "SMB",
+    initials: "MC",
+    performance: "97%",
+    pipeline: "R$ 149k",
+    status: "Atencao",
+    note: "Conversao caiu na semana e precisa reforco de follow-up.",
+  },
+  {
+    name: "Lucas Prado",
+    role: "Inside Sales",
+    initials: "LP",
+    performance: "88%",
+    pipeline: "R$ 126k",
+    status: "Coaching",
+    note: "Tem boas oportunidades, mas com baixo ritmo de proximo passo.",
+  },
 ];
 
 const themeOptions = ["Claro ativo", "Escuro", "Automático"];
@@ -347,6 +386,40 @@ function SellersContent() {
           </div>
         </Card>
 
+        <Card eyebrow="PERFIS" title="Perfis do time" wide>
+          <div className={styles.sellerProfilesGrid}>
+            {sellerProfiles.map((seller) => (
+              <article key={seller.name} className={styles.sellerProfileCard}>
+                <div className={styles.sellerProfileTop}>
+                  <div className={styles.sellerAvatar}>{seller.initials}</div>
+                  <div className={styles.sellerIdentity}>
+                    <strong>{seller.name}</strong>
+                    <span>{seller.role}</span>
+                  </div>
+                </div>
+
+                <div className={styles.sellerStats}>
+                  <div>
+                    <span>Meta</span>
+                    <strong>{seller.performance}</strong>
+                  </div>
+                  <div>
+                    <span>Pipeline</span>
+                    <strong>{seller.pipeline}</strong>
+                  </div>
+                </div>
+
+                <div className={styles.sellerStatusRow}>
+                  <span className={styles.sellerStatusLabel}>Status</span>
+                  <strong>{seller.status}</strong>
+                </div>
+
+                <p className={styles.sellerNote}>{seller.note}</p>
+              </article>
+            ))}
+          </div>
+        </Card>
+
         <Card eyebrow="RANKING" title="Performance por vendedor" wide>
           <Table head={["Vendedor", "Meta", "Pipeline", "Saude", "Status"]} rows={sellerPerformanceRows} />
         </Card>
@@ -365,6 +438,7 @@ function SellersContent() {
 
 export default function HomePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [personalization, setPersonalization] = useState(personalizationDefaults);
   const [activeNav, setActiveNav] = useState("settings");
   const [activeConfig, setActiveConfig] = useState("hubspot");
@@ -411,6 +485,28 @@ export default function HomePage() {
       setProfilePhoto(storedPhoto);
     }
   }, []);
+
+  useEffect(() => {
+    const view = searchParams.get("view");
+    if (!view) return;
+
+    if (view === "profile") {
+      setActiveNav("profile");
+      setProfileViewOpen(true);
+      return;
+    }
+
+    if (view === "settings") {
+      setActiveNav("settings");
+      setProfileViewOpen(false);
+      return;
+    }
+
+    if (navItems.some((item) => item.id === view)) {
+      setActiveNav(view);
+      setProfileViewOpen(false);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const root = document.documentElement;
