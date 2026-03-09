@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
 const STORAGE_KEY = "salesops-personalization";
+const PROFILE_PHOTO_KEY = "salesops-profile-photo";
 
 const navItems = [
   { id: "reports", label: "Relatórios" },
@@ -96,8 +97,33 @@ const maskingRows = [
   ["Receita prevista", "✓", "✓", "✓"],
 ];
 
+const sellerSummary = [
+  ["Vendedores ativos", "18", "3 em rampa neste mes"],
+  ["Meta do time", "94%", "Ritmo acima da semana anterior"],
+  ["Risco de churn", "4 contas", "Exigem contato em ate 24h"],
+];
+
+const sellerPerformanceRows = [
+  ["Ana Souza", "118%", "R$ 184k", "9/10", "Estavel"],
+  ["Carlos Lima", "103%", "R$ 161k", "8/10", "Aquecendo"],
+  ["Marina Costa", "97%", "R$ 149k", "7/10", "Atencao"],
+  ["Lucas Prado", "88%", "R$ 126k", "6/10", "Coaching"],
+];
+
+const sellerAttentionRows = [
+  ["Lucas Prado", "3 negocios sem touch ha 5 dias", "Alta"],
+  ["Marina Costa", "Conversao caiu 12% na semana", "Media"],
+  ["Bruno Melo", "Forecast sem proximo passo definido", "Alta"],
+];
+
+const sellerAgendaRows = [
+  ["1:1 de coaching", "Hoje, 15:00", "Lucas Prado"],
+  ["Revisao de forecast", "Hoje, 17:30", "Squad Enterprise"],
+  ["Treinamento de objecoes", "Amanha, 09:00", "Time Inside Sales"],
+];
+
 const themeOptions = ["Claro ativo", "Escuro", "Automático"];
-const fontOptions = ["Manrope", "IBM Plex Sans", "Source Sans 3"];
+const fontOptions = ["Manrope", "IBM Plex Sans", "Source Sans 3", "Montserrat", "Nunito Sans", "Work Sans"];
 const fontSizeOptions = ["Pequena", "Média", "Grande"];
 const densityOptions = ["Compacta", "Confortável", "Expandida"];
 
@@ -210,15 +236,23 @@ function Row({ label, value, helper }) {
   );
 }
 
-function PhotoOption() {
+function PhotoOption({ profilePhoto, onPhotoChange }) {
   return (
     <div className={styles.photoOption}>
-      <div className={styles.photoPreview}>?</div>
+      <div
+        className={styles.photoPreview}
+        style={profilePhoto ? { backgroundImage: `url(${profilePhoto})` } : undefined}
+      >
+        {profilePhoto ? null : "?"}
+      </div>
       <div className={styles.photoMeta}>
         <strong>Foto do perfil</strong>
         <span>JPG ou PNG, até 5 MB.</span>
       </div>
-      <button type="button" className={styles.photoAction}>Adicionar foto</button>
+      <label className={styles.photoAction}>
+        <input type="file" accept="image/png,image/jpeg,image/jpg,image/webp" className={styles.hiddenFileInput} onChange={onPhotoChange} />
+        <span>Adicionar foto</span>
+      </label>
     </div>
   );
 }
@@ -285,8 +319,8 @@ function PreferenceTable({ rows, values, onToggle }) {
   );
 }
 
-function SettingsContent({ section, personalization, updatePersonalization }) {
-  if (section === "account") return <div className={styles.grid}><Card eyebrow="PERFIL" title="Conta & Acesso"><PhotoOption /><Row label="Nome" value="Usuário SalesOps" /><Row label="Senha" value="Última troca há 14 dias" /><Row label="2FA" value="Obrigatório para gestão" helper="SMS + autenticador" /><Row label="Sessões ativas" value="5 dispositivos" helper="2 navegadores e 3 mobile" /></Card><Card eyebrow="PERMISSÕES" title="Permissões por cargo"><Table head={["Cargo", "Acesso"]} rows={permissionRows} /></Card></div>;
+function SettingsContent({ section, personalization, updatePersonalization, profilePhoto, onPhotoChange }) {
+  if (section === "account") return <div className={styles.grid}><Card eyebrow="PERFIL" title="Conta & Acesso"><PhotoOption profilePhoto={profilePhoto} onPhotoChange={onPhotoChange} /><Row label="Nome" value="Usuário SalesOps" /><Row label="Senha" value="Última troca há 14 dias" /><Row label="2FA" value="Obrigatório para gestão" helper="SMS + autenticador" /><Row label="Sessões ativas" value="5 dispositivos" helper="2 navegadores e 3 mobile" /></Card><Card eyebrow="PERMISSÕES" title="Permissões por cargo"><Table head={["Cargo", "Acesso"]} rows={permissionRows} /></Card></div>;
   if (section === "hubspot") return <div className={styles.grid}><Card eyebrow="STATUS" title="Integração HubSpot"><Row label="Conexão" value="Ativa" helper="Último handshake hoje às 09:01" /><Row label="API key" value="•••• •••• •••• 98K2" /><Row label="Sync" value="A cada 5 minutos" /></Card><Card eyebrow="MAPEAMENTO" title="Campos sincronizados" wide><Table head={["SalesOps", "HubSpot", "Status"]} rows={mappingRows} /></Card><Card eyebrow="LOG" title="Erros recentes"><Table head={["Hora", "Erro", "Gravidade"]} rows={errorRows} /></Card></div>;
   if (section === "notifications") return <div className={styles.grid}><Card eyebrow="CANAIS" title="Notificações & Alertas"><Row label="Email" value="Ativo" helper="comercial@salesops.ai" /><Row label="Push" value="Ativo" helper="Chrome + mobile" /><Row label="Resumo automático" value="Diário" /></Card><Card eyebrow="THRESHOLDS" title="Metas e thresholds" wide><div className={styles.metrics}>{metricRows.map((item) => <Metric key={item[0]} title={item[0]} value={item[1]} note={item[2]} />)}</div></Card></div>;
   if (section === "ai") return <div className={styles.grid}><Card eyebrow="MODELO" title="IA & Diagnósticos"><Row label="Modelo ativo" value="GPT SalesOps Analyst" /><Row label="Assistente de voz" value="Habilitado" /><Row label="Sensibilidade" value="Moderada" helper="menos ruído, mais sinais de risco" /></Card><Card eyebrow="DADOS" title="Dados que alimentam a IA" wide><div className={styles.tags}><span>Negócios</span><span>Atividades</span><span>Calls gravadas</span><span>Sentimento do vendedor</span><span>Próximas tarefas</span></div></Card></div>;
@@ -296,12 +330,46 @@ function SettingsContent({ section, personalization, updatePersonalization }) {
   return <div className={styles.grid}><Card eyebrow="AUDITORIA" title="Eventos recentes" wide><Table head={["Quem", "O quê", "Quando"]} rows={auditRows} /></Card><Card eyebrow="MASKING" title="Matriz visual por campo e cargo"><Table head={["Campo", "Admin", "Gestor", "Vendedor"]} rows={maskingRows} matrix /></Card><Card eyebrow="LGPD" title="Consentimento e conformidade"><Row label="Consentimento" value="Registrado por contato" /><Row label="Esquecimento" value="Fluxo habilitado" helper="remoção em até 7 dias" /><Row label="Relatório" value="Atualizado hoje" /></Card></div>;
 }
 
+function SellersContent() {
+  return (
+    <section className={styles.dashboardSection}>
+      <header className={styles.settingsHeader}>
+        <h1>Vendedores</h1>
+        <p>Visao de performance, ritmo comercial, coaching e prioridades do time.</p>
+      </header>
+
+      <div className={styles.grid}>
+        <Card eyebrow="RESUMO" title="Panorama do time" wide>
+          <div className={styles.metrics}>
+            {sellerSummary.map((item) => (
+              <Metric key={item[0]} title={item[0]} value={item[1]} note={item[2]} />
+            ))}
+          </div>
+        </Card>
+
+        <Card eyebrow="RANKING" title="Performance por vendedor" wide>
+          <Table head={["Vendedor", "Meta", "Pipeline", "Saude", "Status"]} rows={sellerPerformanceRows} />
+        </Card>
+
+        <Card eyebrow="ATENCAO" title="Fila de coaching">
+          <Table head={["Vendedor", "Sinal", "Prioridade"]} rows={sellerAttentionRows} />
+        </Card>
+
+        <Card eyebrow="AGENDA" title="Proximas acoes">
+          <Table head={["Acao", "Quando", "Responsavel"]} rows={sellerAgendaRows} />
+        </Card>
+      </div>
+    </section>
+  );
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [personalization, setPersonalization] = useState(personalizationDefaults);
   const [activeNav, setActiveNav] = useState("settings");
   const [activeConfig, setActiveConfig] = useState("hubspot");
   const [profileViewOpen, setProfileViewOpen] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState("");
   const [collapsed, setCollapsed] = useState(personalizationDefaults.collapseSidebarOnOpen);
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoutPromptOpen, setLogoutPromptOpen] = useState(false);
@@ -338,6 +406,13 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
+    const storedPhoto = window.localStorage.getItem(PROFILE_PHOTO_KEY);
+    if (storedPhoto) {
+      setProfilePhoto(storedPhoto);
+    }
+  }, []);
+
+  useEffect(() => {
     const root = document.documentElement;
     const systemDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
     const theme = personalization.theme === "Automático" ? (systemDark ? "dark" : "light") : (personalization.theme === "Escuro" ? "dark" : "light");
@@ -345,6 +420,9 @@ export default function HomePage() {
       Manrope: "manrope",
       "IBM Plex Sans": "ibm-plex-sans",
       "Source Sans 3": "source-sans-3",
+      Montserrat: "montserrat",
+      "Nunito Sans": "nunito-sans",
+      "Work Sans": "work-sans",
     };
     const fontSizeMap = {
       Pequena: "small",
@@ -378,6 +456,21 @@ export default function HomePage() {
       }
       return next;
     });
+  }
+
+  function handlePhotoChange(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      if (!result) return;
+      setProfilePhoto(result);
+      window.localStorage.setItem(PROFILE_PHOTO_KEY, result);
+    };
+    reader.readAsDataURL(file);
   }
 
   const currentSection = activeNav === "profile"
@@ -419,7 +512,6 @@ export default function HomePage() {
               <button key={item.id} type="button" onClick={() => setActiveNav(item.id)} className={`${styles.navItem} ${activeNav === item.id ? styles.navItemActive : ""}`.trim()} title={collapsed ? item.label : undefined}>
                 <span className={styles.navIcon}>{getNavIcon(item.id)}</span>
                 <span className={styles.navLabel}>{item.label}</span>
-                <kbd className={styles.shortcutHint}>{navShortcuts[item.id]}</kbd>
               </button>
             ))}
           </nav>
@@ -428,7 +520,6 @@ export default function HomePage() {
           <button type="button" onClick={() => { setActiveNav("settings"); setProfileViewOpen(false); }} className={`${styles.navItem} ${styles.settingsItem} ${activeNav === "settings" && !profileViewOpen ? styles.navItemActive : ""}`.trim()} title={collapsed ? "Configurações" : undefined}>
             <span className={styles.navIcon}>{getNavIcon("settings")}</span>
             <span className={styles.navLabel}>Configurações</span>
-            <kbd className={styles.shortcutHint}>{navShortcuts.settings}</kbd>
           </button>
           <button
             type="button"
@@ -439,7 +530,12 @@ export default function HomePage() {
               setProfileViewOpen(true);
             }}
           >
-            <div className={styles.profileAvatar}>?</div>
+            <div
+              className={styles.profileAvatar}
+              style={profilePhoto ? { backgroundImage: `url(${profilePhoto})` } : undefined}
+            >
+              {profilePhoto ? null : "?"}
+            </div>
             <div className={styles.profileText}><div className={styles.profileName}>Usuário</div><div className={styles.profileRole}>Cargo</div></div>
           </button>
         </div>
@@ -456,7 +552,6 @@ export default function HomePage() {
                     <button key={item.id} type="button" onClick={() => { setActiveConfig(item.id); setProfileViewOpen(false); }} className={`${styles.settingsSidebarItem} ${activeConfig === item.id ? styles.settingsSidebarItemActive : ""}`.trim()}>
                       <span className={styles.settingsSidebarIcon}>{getConfigIcon(item.id)}</span>
                       <span className={styles.settingsSidebarLabel}>{item.label}</span>
-                      <kbd className={styles.shortcutHint}>{configShortcuts[item.id]}</kbd>
                     </button>
                   ))}
                 </div>
@@ -467,7 +562,7 @@ export default function HomePage() {
                 <h1>{currentSection?.label}</h1>
                 <p>{currentSection?.description}</p>
               </header>
-              <SettingsContent section={activeConfig} personalization={personalization} updatePersonalization={updatePersonalization} />
+              <SettingsContent section={activeConfig} personalization={personalization} updatePersonalization={updatePersonalization} profilePhoto={profilePhoto} onPhotoChange={handlePhotoChange} />
             </div>
           </section>
         ) : activeNav === "profile" ? (
@@ -478,10 +573,12 @@ export default function HomePage() {
                 <p>{accountSection.description}</p>
               </header>
               <div className={styles.profileStandalone}>
-                <SettingsContent section="account" personalization={personalization} updatePersonalization={updatePersonalization} />
+                <SettingsContent section="account" personalization={personalization} updatePersonalization={updatePersonalization} profilePhoto={profilePhoto} onPhotoChange={handlePhotoChange} />
               </div>
             </div>
           </section>
+        ) : activeNav === "sellers" ? (
+          <SellersContent />
         ) : (
           <div className={styles.emptyState}><div className={styles.placeholderBadge}>Em breve</div><span>{navItems.find((item) => item.id === activeNav)?.label}</span></div>
         )}

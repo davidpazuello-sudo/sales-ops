@@ -345,6 +345,9 @@
   display: grid;
   place-items: center;
   background: var(--accent);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   color: #fff;
   font-size: calc(11px * var(--font-scale));
   font-weight: 800;
@@ -366,6 +369,10 @@
   min-width: 0;
   height: calc(100vh - 52px);
   overflow: auto;
+}
+
+.dashboardSection {
+  padding: calc(34px * var(--density-scale)) calc(38px * var(--density-scale)) calc(42px * var(--density-scale));
 }
 
 .settingsLayout {
@@ -480,6 +487,9 @@
   display: grid;
   place-items: center;
   background: linear-gradient(135deg, var(--accent), #f3a43d);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   color: #fff;
   font-size: calc(24px * var(--font-scale));
   font-weight: 800;
@@ -510,9 +520,16 @@
   border-radius: 12px;
   background: var(--accent-soft);
   color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font: inherit;
   font-weight: 700;
   cursor: pointer;
+}
+
+.hiddenFileInput {
+  display: none;
 }
 
 .cardEyebrow {

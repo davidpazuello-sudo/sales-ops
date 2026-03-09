@@ -72,6 +72,18 @@ html[data-font="source-sans-3"] {
   --app-font: var(--font-source-sans);
 }
 
+html[data-font="montserrat"] {
+  --app-font: var(--font-montserrat);
+}
+
+html[data-font="nunito-sans"] {
+  --app-font: var(--font-nunito-sans);
+}
+
+html[data-font="work-sans"] {
+  --app-font: var(--font-work-sans);
+}
+
 html[data-font-size="small"] {
   --font-scale: 0.92;
 }
