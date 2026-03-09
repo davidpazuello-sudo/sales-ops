@@ -13,8 +13,13 @@ const navItems = [
 
 const topMenuItems = ["Arquivo", "Editar", "Visualizar", "Ajuda"];
 
+const accountSection = {
+  id: "account",
+  label: "Conta & Acesso",
+  description: "Perfil, senha, 2FA, sessões ativas e permissões por cargo.",
+};
+
 const configSections = [
-  { id: "account", label: "Conta & Acesso", description: "Perfil, senha, 2FA, sessões ativas e permissões por cargo." },
   { id: "hubspot", label: "Integração HubSpot", description: "Status da conexão, chave, sync, mapeamento e log de erros." },
   { id: "notifications", label: "Notificações & Alertas", description: "Canais, thresholds, metas e resumos automáticos." },
   { id: "ai", label: "IA & Diagnósticos", description: "Modelo ativo, voz, dados de contexto e sensibilidade diagnóstica." },
@@ -191,7 +196,7 @@ function SettingsContent({ section }) {
 export default function HomePage() {
   const router = useRouter();
   const [activeNav, setActiveNav] = useState("settings");
-  const [activeConfig, setActiveConfig] = useState("account");
+  const [activeConfig, setActiveConfig] = useState("hubspot");
   const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoutPromptOpen, setLogoutPromptOpen] = useState(false);
@@ -215,7 +220,10 @@ export default function HomePage() {
     };
   }, []);
 
-  const currentSection = configSections.find((item) => item.id === activeConfig);
+  const currentSection =
+    activeConfig === "account"
+      ? accountSection
+      : configSections.find((item) => item.id === activeConfig);
 
   return (
     <main className={`${styles.appShell} ${collapsed ? styles.appShellCollapsed : ""}`.trim()}>
@@ -233,10 +241,7 @@ export default function HomePage() {
           <button
             type="button"
             className={styles.aiButton}
-            onClick={() => {
-              setActiveNav("settings");
-              setActiveConfig("ai");
-            }}
+            onClick={() => router.push("/ai-agent")}
             title="Agente de IA para análise completa do sistema respeitando perfil e acesso"
           >
             <SparkIcon />
@@ -244,7 +249,7 @@ export default function HomePage() {
           </button>
           <button
             type="button"
-            className={styles.topbarButton}
+            className={`${styles.topbarButton} ${styles.notificationButton}`.trim()}
             aria-label="Notificações"
             title="Notificações"
             onClick={() => {
@@ -278,10 +283,17 @@ export default function HomePage() {
             <span className={styles.navIcon}>{getNavIcon("settings")}</span>
             <span className={styles.navLabel}>Configurações</span>
           </button>
-          <div className={styles.profileBox}>
+          <button
+            type="button"
+            className={styles.profileBox}
+            onClick={() => {
+              setActiveNav("settings");
+              setActiveConfig("account");
+            }}
+          >
             <div className={styles.profileAvatar}>?</div>
             <div className={styles.profileText}><div className={styles.profileName}>Usuário</div><div className={styles.profileRole}>Cargo</div></div>
-          </div>
+          </button>
         </div>
       </aside>
 
