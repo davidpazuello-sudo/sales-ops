@@ -566,6 +566,32 @@ function SellersContent({ dashboardData }) {
   const filteredSellers = dashboardData.sellers.filter((seller) =>
     seller.name.toLowerCase().includes(sellerFilter.trim().toLowerCase()),
   );
+  const parseCurrencyLabel = (label) => {
+    const numericValue = Number.parseFloat(
+      String(label).replace(/[^\d,]/g, "").replace(/\./g, "").replace(",", "."),
+    );
+
+    return Number.isNaN(numericValue) ? 0 : numericValue;
+  };
+
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      maximumFractionDigits: 0,
+    }).format(value);
+
+  const getMotivationStatus = (seller) => {
+    if (seller.metaPercent >= 105 && seller.health >= 8) {
+      return "Alto";
+    }
+
+    if (seller.metaPercent >= 90 && seller.health >= 6) {
+      return "Medio";
+    }
+
+    return "Baixo";
+  };
 
   return (
     <section className={styles.dashboardSection}>
@@ -585,42 +611,55 @@ function SellersContent({ dashboardData }) {
       </header>
 
       <div className={styles.sellerProfilesGrid}>
-        {filteredSellers.map((seller) => (
-          <button
-            key={seller.name}
-            type="button"
-            className={styles.sellerProfileContainer}
-            onClick={() => router.push(`/vendedores/${sellerToSlug(seller.name)}`)}
-          >
-            <article className={styles.sellerProfileCard}>
-              <div className={styles.sellerProfileTop}>
-                <div className={styles.sellerAvatar}>{seller.initials}</div>
-                <div className={styles.sellerIdentity}>
-                  <strong>{seller.name}</strong>
-                  <span>{seller.team}</span>
-                </div>
-              </div>
+        {filteredSellers.map((seller) => {
+          const sellerDeals = dashboardData.deals.filter((deal) => deal.owner === seller.name);
+          const totalPipeline = sellerDeals.reduce((sum, deal) => sum + parseCurrencyLabel(deal.amountLabel), 0);
+          const pendingTasks = sellerDeals.filter((deal) => Number.parseInt(deal.staleLabel, 10) >= 3).length;
+          const motivationStatus = getMotivationStatus(seller);
 
-              <div className={styles.sellerStats}>
-                <div>
-                  <span>Meta</span>
-                  <strong>{seller.metaPercent}%</strong>
+          return (
+            <button
+              key={seller.name}
+              type="button"
+              className={styles.sellerProfileContainer}
+              onClick={() => router.push(`/vendedores/${sellerToSlug(seller.name)}`)}
+            >
+              <article className={styles.sellerProfileCard}>
+                <div className={styles.sellerProfileTop}>
+                  <div className={styles.sellerAvatar}>{seller.initials}</div>
+                  <div className={styles.sellerIdentity}>
+                    <strong>{seller.name}</strong>
+                    <span>{seller.team}</span>
+                  </div>
                 </div>
-                <div>
-                  <span>Pipeline</span>
-                  <strong>{seller.pipelineLabel}</strong>
+
+                <div className={styles.sellerStats}>
+                  <div>
+                    <span>Negocios abertos</span>
+                    <strong>{seller.openDeals}</strong>
+                  </div>
+                  <div>
+                    <span>Valor total na pipeline</span>
+                    <strong>{formatCurrency(totalPipeline)}</strong>
+                  </div>
                 </div>
-              </div>
 
-              <div className={styles.sellerStatusRow}>
-                <span className={styles.sellerStatusLabel}>Status</span>
-                <strong>{seller.status}</strong>
-              </div>
+                <div className={styles.sellerStats}>
+                  <div>
+                    <span>Tarefas a fazer</span>
+                    <strong>{pendingTasks}</strong>
+                  </div>
+                  <div>
+                    <span>Status motivacao</span>
+                    <strong>{motivationStatus}</strong>
+                  </div>
+                </div>
 
-              <p className={styles.sellerNote}>{seller.note}</p>
-            </article>
-          </button>
-        ))}
+                <p className={styles.sellerNote}>{seller.note}</p>
+              </article>
+            </button>
+          );
+        })}
       </div>
     </section>
   );
@@ -633,6 +672,18 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
   const conversionRate = seller.openDeals + seller.wonDeals > 0
     ? Math.round((seller.wonDeals / (seller.openDeals + seller.wonDeals)) * 100)
     : 0;
+  const totalPipelineValue = sellerDeals.reduce((sum, deal) => {
+    const numericValue = Number.parseFloat(
+      String(deal.amountLabel).replace(/[^\d,]/g, "").replace(/\./g, "").replace(",", "."),
+    );
+    return Number.isNaN(numericValue) ? sum : sum + numericValue;
+  }, 0);
+  const pendingTasks = sellerDeals.filter((deal) => Number.parseInt(deal.staleLabel, 10) >= 3).length;
+  const motivationStatus = seller.metaPercent >= 105 && seller.health >= 8
+    ? "Alto"
+    : seller.metaPercent >= 90 && seller.health >= 6
+      ? "Medio"
+      : "Baixo";
   const activityKpis = [
     ["Chamadas", `${seller.openDeals * 7}`],
     ["Emails", `${seller.openDeals * 12}`],
@@ -644,13 +695,7 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
     { title: "Negotiation", count: sellerDeals.filter((deal) => deal.stage.toLowerCase().includes("negotiation")).length },
     { title: "Commit", count: sellerDeals.filter((deal) => deal.stage.toLowerCase().includes("commit")).length },
   ];
-  const aiSuggestions = sellerDeals.length
-    ? sellerDeals.map((deal) => ({
-        id: deal.id,
-        title: deal.name,
-        suggestion: `Acione ${deal.owner} com proxima etapa clara e recapitule o valor percebido para acelerar ${deal.stage.toLowerCase()}.`,
-      }))
-    : [{ id: "fallback", title: seller.name, suggestion: "Sem negocios ativos suficientes para recomendacao preditiva no momento." }];
+  const maxKanbanCount = Math.max(1, ...kanbanColumns.map((column) => column.count));
 
   return (
     <section className={styles.dashboardSection}>
@@ -665,29 +710,50 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
       </header>
 
       <div className={styles.grid}>
-        <Card eyebrow="SAUDE" title="Status de saude do pipeline" wide>
+        <Card eyebrow="GERAL" title="Visao geral do pipeline" wide>
           <div className={styles.metrics}>
-            <Metric title="Negocios parados" value={`${stalledDeals.length}`} note="Acima do SLA de estagnacao" />
-            <Metric title="Proximas tarefas" value={`${Math.max(2, seller.openDeals)}`} note="Acoes criticas para hoje" />
-            <Metric title="Urgencia" value={stalledDeals.length > 1 ? "Alta" : "Controlada"} note="Baseado nos negocios da HubSpot" />
+            <Metric title="Negocios abertos" value={`${seller.openDeals}`} note="Carteira ativa na HubSpot" />
+            <Metric
+              title="Valor total na pipeline"
+              value={new Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+                maximumFractionDigits: 0,
+              }).format(totalPipelineValue)}
+              note="Potencial financeiro atual"
+            />
+            <Metric title="Tarefas a fazer" value={`${pendingTasks}`} note="Negocios sem proximo passo recente" />
+            <Metric title="Status motivacao" value={motivationStatus} note="Leitura geral de ritmo e desempenho" />
           </div>
-          <div className={styles.dealList}>
-            {stalledDeals.length ? stalledDeals.map((deal) => (
-              <article key={deal.id} className={styles.dealListItem}>
-                <div className={styles.dealIdentity}>
-                  <strong>{deal.name}</strong>
-                  <span>{deal.stage}</span>
+          <div className={styles.pipelineStageChart}>
+            {kanbanColumns.map((column) => (
+              <article key={column.title} className={styles.pipelineStageBarCard}>
+                <div className={styles.pipelineStageBarWrap}>
+                  <div
+                    className={styles.pipelineStageBar}
+                    style={{ height: `${Math.max(16, (column.count / maxKanbanCount) * 100)}%` }}
+                  />
                 </div>
-                <div className={styles.dealMeta}>
-                  <strong>{deal.staleLabel}</strong>
-                  <span>Sem interacao recente</span>
-                </div>
-                <div className={styles.dealMeta}>
-                  <strong>Fazer hoje</strong>
-                  <span>Registrar proximo passo no HubSpot</span>
-                </div>
+                <strong>{column.count}</strong>
+                <span>{column.title}</span>
               </article>
-            )) : <p className={styles.sellerDetailNote}>Nenhum negocio estagnado para este vendedor.</p>}
+            ))}
+          </div>
+        </Card>
+
+        <Card eyebrow="PERFORMANCE" title="Performance e produtividade" wide>
+          <div className={styles.metrics}>
+            <Metric title="Taxa de conversao" value={`${conversionRate}%`} note="Negocios ganhos vs. perdidos/em aberto" />
+            <Metric title="Atingimento de meta" value={`${seller.metaPercent}%`} note="Comparativo com a cota atual" />
+            <Metric title="Pipeline" value={seller.pipelineLabel} note="Valor comercial sob gestao" />
+          </div>
+          <div className={styles.kpiRow}>
+            {activityKpis.map((item) => (
+              <div key={item[0]} className={styles.kpiCard}>
+                <span>{item[0]}</span>
+                <strong>{item[1]}</strong>
+              </div>
+            ))}
           </div>
         </Card>
 
@@ -704,37 +770,6 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
                 <strong>{column.count}</strong>
                 <small>Arraste e solte para atualizar status</small>
               </article>
-            ))}
-          </div>
-        </Card>
-
-        <Card eyebrow="IA" title="Inteligencia artificial e recomendacoes" wide>
-          <div className={styles.aiSuggestionList}>
-            {aiSuggestions.map((item) => (
-              <article key={item.id} className={styles.aiSuggestionCard}>
-                <strong>{item.title}</strong>
-                <p>{item.suggestion}</p>
-              </article>
-            ))}
-          </div>
-          <div className={styles.aiAssistantBox}>
-            <span>Assistente conversacional</span>
-            <input type="text" placeholder="Pergunte a IA sobre historico, clientes ou riscos deste vendedor..." />
-          </div>
-        </Card>
-
-        <Card eyebrow="PERFORMANCE" title="Performance e produtividade" wide>
-          <div className={styles.metrics}>
-            <Metric title="Taxa de conversao" value={`${conversionRate}%`} note="Negocios ganhos vs. perdidos/em aberto" />
-            <Metric title="Atingimento de meta" value={`${seller.metaPercent}%`} note="Comparativo com a cota atual" />
-            <Metric title="Pipeline" value={seller.pipelineLabel} note="Valor comercial sob gestao" />
-          </div>
-          <div className={styles.kpiRow}>
-            {activityKpis.map((item) => (
-              <div key={item[0]} className={styles.kpiCard}>
-                <span>{item[0]}</span>
-                <strong>{item[1]}</strong>
-              </div>
             ))}
           </div>
         </Card>
@@ -770,15 +805,6 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
               <strong>Bom momento de evolucao</strong>
             </div>
           </div>
-        </Card>
-
-        <Card eyebrow="CADASTRO" title="Dados de cadastro e seguranca">
-          <Row label="Foto" value="Perfil sincronizado" />
-          <Row label="Cargo" value={seller.team} />
-          <Row label="Equipe" value="Time comercial" />
-          <Row label="Email" value={seller.email || `${sellerToSlug(seller.name)}@opssales.com.br`} />
-          <Row label="Telefone" value="(11) 99999-0000" />
-          <Row label="Nivel de permissao" value="Apenas negocios proprios" helper="RBAC aplicado por perfil" />
         </Card>
 
         <Card eyebrow="NEGOCIOS" title="Pipeline do vendedor" wide>

@@ -941,6 +941,57 @@
   text-align: center;
 }
 
+.pipelineStageChart {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  align-items: end;
+  margin-top: 18px;
+  padding: calc(18px * var(--density-scale));
+  border-radius: 20px;
+  background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+}
+
+.pipelineStageBarCard {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.pipelineStageBarWrap {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 12px 0;
+  border-radius: 16px;
+  background:
+    linear-gradient(to top, color-mix(in srgb, var(--border) 70%, transparent) 1px, transparent 1px);
+  background-size: 100% 36px;
+}
+
+.pipelineStageBar {
+  width: min(72px, 72%);
+  min-height: 16px;
+  border-radius: 16px 16px 6px 6px;
+  background: linear-gradient(180deg, #f3ae43, var(--accent));
+  box-shadow: 0 12px 24px rgba(222, 131, 0, 0.18);
+}
+
+.pipelineStageBarCard strong {
+  color: var(--heading);
+  font-size: calc(18px * var(--font-scale));
+}
+
+.pipelineStageBarCard span {
+  color: var(--muted);
+  font-size: calc(12px * var(--font-scale));
+  font-weight: 700;
+  text-align: center;
+}
+
 .kanbanBoard {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1434,6 +1485,7 @@
   .previewPanel,
   .sellerProfilesGrid,
   .pipelineBoard,
+  .pipelineStageChart,
   .kanbanBoard,
   .kpiRow {
     grid-template-columns: 1fr;
