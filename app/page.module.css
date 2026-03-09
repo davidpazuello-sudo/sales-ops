@@ -197,7 +197,7 @@
 
 .navigation {
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
   padding: 10px 4px 0;
 }
 
@@ -216,6 +216,7 @@
   margin: 0 4px;
   padding: 0 8px;
   color: #667a97;
+  font-size: 13px;
   white-space: nowrap;
 }
 
@@ -292,7 +293,7 @@
 
 .settingsLayout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 236px 1fr;
   min-height: 100%;
   align-items: start;
 }
@@ -303,15 +304,15 @@
   align-self: start;
   height: calc(100vh - 52px);
   overflow: auto;
-  padding: 26px 14px;
+  padding: 22px 12px;
   background: #fcfcfd;
   border-right: 1px solid #e3e7ee;
 }
 
 .settingsSidebarTitle {
-  margin: 4px 8px 16px;
+  margin: 4px 8px 14px;
   color: #95a2b7;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.09em;
 }
@@ -323,9 +324,10 @@
 
 .settingsSidebarItem {
   width: 100%;
-  min-height: 46px;
-  padding: 10px 14px;
+  min-height: 40px;
+  padding: 8px 12px;
   color: #6b7f9d;
+  font-size: 13px;
 }
 
 .settingsContent {
@@ -669,7 +671,7 @@
 
 @media (max-width: 1180px) {
   .settingsLayout {
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 216px 1fr;
   }
 }
 

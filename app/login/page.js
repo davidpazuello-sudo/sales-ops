@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
@@ -23,10 +24,16 @@ const qrCells = [
 
 export default function LoginPage() {
   const router = useRouter();
+  const [requestMode, setRequestMode] = useState(false);
 
   function handleSubmit(event) {
     event.preventDefault();
     router.push("/");
+  }
+
+  function handleRequestAccess(event) {
+    event.preventDefault();
+    setRequestMode(false);
   }
 
   return (
@@ -39,36 +46,72 @@ export default function LoginPage() {
       <div className={styles.loginCard}>
         <section className={styles.formSide}>
           <div className={styles.welcomeBlock}>
-            <h1>Boas-vindas de volta!</h1>
-            <p>Estamos muito animados em te ver novamente!</p>
+            <h1>{requestMode ? "Solicitar acesso" : "Boas-vindas de volta!"}</h1>
+            <p>
+              {requestMode
+                ? "Informe seu email corporativo para pedir acesso ao workspace do SalesOps."
+                : "Estamos muito animados em te ver novamente!"}
+            </p>
           </div>
 
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <label className={styles.field}>
-              <span>Email corporativo</span>
-              <input type="email" placeholder="voce@empresa.com" />
-            </label>
+          {requestMode ? (
+            <>
+              <form className={styles.form} onSubmit={handleRequestAccess}>
+                <label className={styles.field}>
+                  <span>Email corporativo</span>
+                  <input type="email" placeholder="voce@empresa.com" />
+                </label>
 
-            <label className={styles.field}>
-              <span>Senha</span>
-              <input type="password" placeholder="Digite sua senha" />
-            </label>
+                <button type="submit" className={styles.primaryButton}>
+                  Enviar solicitacao
+                </button>
+              </form>
 
-            <button type="button" className={styles.inlineAction}>
-              Esqueceu sua senha?
-            </button>
+              <div className={styles.footerNote}>
+                <span>Ja tem uma conta?</span>
+                <button
+                  type="button"
+                  className={styles.inlineAction}
+                  onClick={() => setRequestMode(false)}
+                >
+                  Voltar para login
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <form className={styles.form} onSubmit={handleSubmit}>
+                <label className={styles.field}>
+                  <span>Email corporativo</span>
+                  <input type="email" placeholder="voce@empresa.com" />
+                </label>
 
-            <button type="submit" className={styles.primaryButton}>
-              Entrar
-            </button>
-          </form>
+                <label className={styles.field}>
+                  <span>Senha</span>
+                  <input type="password" placeholder="Digite sua senha" />
+                </label>
 
-          <div className={styles.footerNote}>
-            <span>Precisando de uma conta?</span>
-            <button type="button" className={styles.inlineAction}>
-              Solicitar acesso
-            </button>
-          </div>
+                <button type="button" className={styles.inlineAction}>
+                  Esqueceu sua senha?
+                </button>
+
+                <button type="submit" className={styles.primaryButton}>
+                  Entrar
+                </button>
+              </form>
+
+              <div className={styles.footerNote}>
+                <span>Precisando de uma conta?</span>
+                <button
+                  type="button"
+                  className={styles.inlineAction}
+                  onClick={() => setRequestMode(true)}
+                >
+                  Solicitar acesso
+                </button>
+              </div>
+            </>
+          )}
         </section>
 
         <section className={styles.qrSide}>
