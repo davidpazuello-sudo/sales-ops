@@ -237,6 +237,63 @@ function sellerToSlug(name) {
     .replace(/^-+|-+$/g, "");
 }
 
+function meetingToSlug(title) {
+  return sellerToSlug(title);
+}
+
+function getInternalMeetingsForSeller(seller) {
+  if (!seller) {
+    return [];
+  }
+
+  const sellerSlug = sellerToSlug(seller.name);
+
+  return [
+    {
+      id: `${sellerSlug}-weekly-forecast`,
+      title: "Weekly forecast comercial",
+      date: "09 Mar 2026",
+      time: "09:00",
+      type: "Ritual semanal",
+      owner: "Lider comercial",
+      summary: "Revisao de forecast, riscos por conta e definicao de proximos passos no HubSpot.",
+      notes: [
+        "Alinhar prioridades da semana com foco em propostas abertas.",
+        "Revisar contas sem atividade acima do SLA.",
+        "Atualizar comprometimento de receita no HubSpot.",
+      ],
+    },
+    {
+      id: `${sellerSlug}-coaching-1-1`,
+      title: "Coaching 1:1",
+      date: "11 Mar 2026",
+      time: "15:00",
+      type: "Coaching",
+      owner: "Supervisor",
+      summary: "Checkpoint individual sobre conversao, postura comercial e execucao do pipeline.",
+      notes: [
+        "Revisar postura em discovery e qualificacao.",
+        "Mapear objecoes recorrentes nas ultimas oportunidades.",
+        "Definir um plano curto de melhoria para a semana.",
+      ],
+    },
+    {
+      id: `${sellerSlug}-retrospectiva-pipeline`,
+      title: "Retrospectiva de pipeline",
+      date: "14 Mar 2026",
+      time: "17:30",
+      type: "Operacao",
+      owner: "Sales Ops",
+      summary: "Analise de gargalos operacionais, tempos de etapa e consistencia de atualizacao na HubSpot.",
+      notes: [
+        "Verificar tempo medio por etapa.",
+        "Conferir campos obrigatorios pendentes.",
+        "Padronizar proximo passo em todos os negocios ativos.",
+      ],
+    },
+  ];
+}
+
 function MenuIcon() {
   return <div className={styles.hamburger} aria-hidden="true"><span /><span /><span /></div>;
 }
@@ -560,6 +617,145 @@ function DealsContent({ dashboardData }) {
   );
 }
 
+function SellerMeetingsContent({ dashboardData, sellerSlug }) {
+  const router = useRouter();
+  const seller = dashboardData.sellers.find((item) => sellerToSlug(item.name) === sellerSlug) || dashboardData.sellers[0];
+  const meetings = getInternalMeetingsForSeller(seller);
+
+  return (
+    <section className={styles.dashboardSection}>
+      <header className={styles.sellerDetailHeader}>
+        <div className={styles.settingsHeader}>
+          <h1>Reunioes internas</h1>
+          <p>{seller.name} · Lista consolidada de alinhamentos internos e rituais de acompanhamento.</p>
+        </div>
+        <div className={styles.sellerMeetingActions}>
+          <button
+            type="button"
+            className={styles.secondaryActionButton}
+            onClick={() => router.push(`/vendedores/${sellerSlug}`)}
+          >
+            Voltar ao perfil
+          </button>
+          <button
+            type="button"
+            className={styles.primaryActionButton}
+            onClick={() => router.push(`/vendedores/${sellerSlug}/reunioes/nova`)}
+          >
+            Registrar nova reuniao
+          </button>
+        </div>
+      </header>
+
+      <section className={styles.meetingsList}>
+        {meetings.map((meeting) => (
+          <button
+            key={meeting.id}
+            type="button"
+            className={styles.meetingRow}
+            onClick={() => router.push(`/vendedores/${sellerSlug}/reunioes/${meetingToSlug(meeting.id)}`)}
+          >
+            <div className={styles.meetingPrimary}>
+              <strong>{meeting.title}</strong>
+              <span>{meeting.summary}</span>
+            </div>
+            <div className={styles.meetingMeta}>
+              <strong>{meeting.date}</strong>
+              <span>{meeting.time}</span>
+            </div>
+            <div className={styles.meetingMeta}>
+              <strong>{meeting.type}</strong>
+              <span>{meeting.owner}</span>
+            </div>
+          </button>
+        ))}
+      </section>
+    </section>
+  );
+}
+
+function SellerMeetingDetailContent({ dashboardData, sellerSlug, meetingId }) {
+  const router = useRouter();
+  const seller = dashboardData.sellers.find((item) => sellerToSlug(item.name) === sellerSlug) || dashboardData.sellers[0];
+  const meetings = getInternalMeetingsForSeller(seller);
+  const meeting = meetings.find((item) => meetingToSlug(item.id) === meetingId) || meetings[0];
+  const isNewMeeting = meetingId === "nova";
+
+  return (
+    <section className={styles.dashboardSection}>
+      <header className={styles.sellerDetailHeader}>
+        <div className={styles.settingsHeader}>
+          <h1>{isNewMeeting ? "Registrar nova reuniao" : meeting.title}</h1>
+          <p>
+            {isNewMeeting
+              ? `Novo registro interno para ${seller.name}, preparado para posterior sincronizacao com a HubSpot.`
+              : `${meeting.date} · ${meeting.time} · ${meeting.type}`}
+          </p>
+        </div>
+        <div className={styles.sellerMeetingActions}>
+          <button
+            type="button"
+            className={styles.secondaryActionButton}
+            onClick={() => router.push(`/vendedores/${sellerSlug}/reunioes`)}
+          >
+            Voltar para lista
+          </button>
+        </div>
+      </header>
+
+      <div className={styles.grid}>
+        <Card eyebrow="REUNIAO" title={isNewMeeting ? "Novo registro" : "Resumo da reuniao"} wide>
+          {isNewMeeting ? (
+            <div className={styles.meetingComposer}>
+              <label className={styles.meetingField}>
+                <span>Titulo</span>
+                <input type="text" placeholder="Ex.: Alinhamento semanal do pipeline" />
+              </label>
+              <div className={styles.meetingFieldRow}>
+                <label className={styles.meetingField}>
+                  <span>Data</span>
+                  <input type="text" placeholder="dd/mm/aaaa" />
+                </label>
+                <label className={styles.meetingField}>
+                  <span>Horario</span>
+                  <input type="text" placeholder="09:00" />
+                </label>
+              </div>
+              <label className={styles.meetingField}>
+                <span>Resumo</span>
+                <textarea rows="5" placeholder="Descreva objetivo, contexto e decisoes da reuniao." />
+              </label>
+            </div>
+          ) : (
+            <div className={styles.meetingDetailStack}>
+              <Row label="Responsavel" value={meeting.owner} />
+              <Row label="Tipo" value={meeting.type} />
+              <Row label="Resumo" value={meeting.summary} />
+            </div>
+          )}
+        </Card>
+
+        <Card eyebrow="PAUTA" title={isNewMeeting ? "Itens esperados" : "Pontos principais"} wide>
+          <div className={styles.meetingNotesList}>
+            {(isNewMeeting
+              ? [
+                  "Definir objetivo da reuniao.",
+                  "Relacionar contas ou negocios discutidos.",
+                  "Registrar proximos passos e responsaveis.",
+                ]
+              : meeting.notes).map((note) => (
+              <div key={note} className={styles.meetingNoteItem}>
+                <span className={styles.meetingBullet} />
+                <p>{note}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+    </section>
+  );
+}
+
 function SellersContent({ dashboardData }) {
   const router = useRouter();
   const [sellerFilter, setSellerFilter] = useState("");
@@ -669,9 +865,9 @@ function SellersContent({ dashboardData }) {
 }
 
 function SellerProfileContent({ dashboardData, sellerSlug }) {
+  const router = useRouter();
   const seller = dashboardData.sellers.find((item) => sellerToSlug(item.name) === sellerSlug) || dashboardData.sellers[0];
   const sellerDeals = dashboardData.deals.filter((deal) => deal.owner === seller.name);
-  const stalledDeals = sellerDeals.filter((deal) => Number.parseInt(deal.staleLabel, 10) >= 5);
   const conversionRate = seller.openDeals + seller.wonDeals > 0
     ? Math.round((seller.wonDeals / (seller.openDeals + seller.wonDeals)) * 100)
     : 0;
@@ -709,6 +905,15 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
             <h1>{seller.name}</h1>
             <p>{seller.team}</p>
           </div>
+        </div>
+        <div className={styles.sellerMeetingActions}>
+          <button
+            type="button"
+            className={styles.primaryActionButton}
+            onClick={() => router.push(`/vendedores/${sellerSlug}/reunioes`)}
+          >
+            Reunioes internas
+          </button>
         </div>
       </header>
 
@@ -756,23 +961,6 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
                 <span>{item[0]}</span>
                 <strong>{item[1]}</strong>
               </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card eyebrow="FUNIL" title="Visao de funil individual" wide>
-          <div className={styles.metrics}>
-            <Metric title="Oportunidades" value={`${seller.openDeals}`} note="Negocios sob responsabilidade" />
-            <Metric title="Valor acumulado" value={seller.pipelineLabel} note="Pipeline financeiro atual" />
-            <Metric title="Saude" value={seller.health} note={seller.status} />
-          </div>
-          <div className={styles.kanbanBoard}>
-            {kanbanColumns.map((column) => (
-              <article key={column.title} className={styles.kanbanColumn}>
-                <span>{column.title}</span>
-                <strong>{column.count}</strong>
-                <small>Arraste e solte para atualizar status</small>
-              </article>
             ))}
           </div>
         </Card>
@@ -840,6 +1028,8 @@ export default function DashboardShell({
   initialConfig = "hubspot",
   initialProfileView = false,
   sellerSlug = "",
+  sellerMeetingsView = false,
+  sellerMeetingId = "",
 }) {
   const router = useRouter();
   const [personalization, setPersonalization] = useState(personalizationDefaults);
@@ -1105,6 +1295,10 @@ export default function DashboardShell({
               </div>
             </div>
           </section>
+        ) : sellerMeetingId ? (
+          <SellerMeetingDetailContent dashboardData={dashboardData} sellerSlug={sellerSlug} meetingId={sellerMeetingId} />
+        ) : sellerMeetingsView ? (
+          <SellerMeetingsContent dashboardData={dashboardData} sellerSlug={sellerSlug} />
         ) : sellerSlug ? (
           <SellerProfileContent dashboardData={dashboardData} sellerSlug={sellerSlug} />
         ) : activeNav === "sellers" ? (

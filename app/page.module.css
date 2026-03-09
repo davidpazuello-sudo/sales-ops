@@ -801,6 +801,11 @@
 
 .sellerDetailHeader {
   margin-bottom: 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .sellerDetailIdentity {
@@ -817,6 +822,46 @@
 .sellerDetailIdentity .settingsHeader p {
   margin-top: 6px;
   font-size: calc(12px * var(--font-scale));
+}
+
+.sellerMeetingActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.primaryActionButton,
+.secondaryActionButton {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: calc(12px * var(--font-scale));
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    background var(--motion-fast) ease;
+}
+
+.primaryActionButton {
+  border: 0;
+  background: linear-gradient(135deg, var(--accent), #f3a43d);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(222, 131, 0, 0.16);
+}
+
+.secondaryActionButton {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--heading);
+}
+
+.primaryActionButton:hover,
+.secondaryActionButton:hover {
+  transform: translateY(-1px);
 }
 
 .sellerDetailAvatar {
@@ -836,6 +881,128 @@
   color: var(--muted);
   font-size: calc(12px * var(--font-scale));
   line-height: 1.55;
+}
+
+.meetingsList {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.meetingRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 0.7fr) minmax(0, 0.7fr);
+  gap: 14px;
+  width: 100%;
+  padding: calc(14px * var(--density-scale)) calc(16px * var(--density-scale));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease,
+    border-color var(--motion-fast) ease;
+}
+
+.meetingRow:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--border));
+  box-shadow: 0 10px 20px rgba(17, 32, 58, 0.06);
+}
+
+.meetingPrimary,
+.meetingMeta {
+  display: grid;
+  gap: 4px;
+}
+
+.meetingPrimary strong,
+.meetingMeta strong {
+  color: var(--heading);
+  font-size: calc(13px * var(--font-scale));
+}
+
+.meetingPrimary span,
+.meetingMeta span {
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  line-height: 1.55;
+}
+
+.meetingComposer,
+.meetingDetailStack {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.meetingFieldRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.meetingField {
+  display: grid;
+  gap: 8px;
+}
+
+.meetingField span {
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 700;
+}
+
+.meetingField input,
+.meetingField textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  outline: none;
+  resize: vertical;
+}
+
+.meetingField input:focus,
+.meetingField textarea:focus {
+  border-color: rgba(222, 131, 0, 0.58);
+  box-shadow: 0 0 0 4px rgba(222, 131, 0, 0.08);
+}
+
+.meetingNotesList {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.meetingNoteItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: calc(12px * var(--density-scale)) calc(14px * var(--density-scale));
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+}
+
+.meetingNoteItem p {
+  margin: 0;
+  color: var(--text);
+  font-size: calc(12px * var(--font-scale));
+  line-height: 1.6;
+}
+
+.meetingBullet {
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  flex: 0 0 auto;
 }
 
 .pipelineBoard {
@@ -1508,7 +1675,8 @@
   .pipelineBoard,
   .pipelineStageChart,
   .kanbanBoard,
-  .kpiRow {
+  .kpiRow,
+  .meetingFieldRow {
     grid-template-columns: 1fr;
   }
 
@@ -1533,12 +1701,14 @@
   .detailRow,
   .preferenceRow,
   .photoOption,
-  .dealListItem {
+  .dealListItem,
+  .meetingRow {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .dealListItem {
+  .dealListItem,
+  .meetingRow {
     display: flex;
   }
 
