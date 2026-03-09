@@ -274,3 +274,687 @@
   font-size: 11px;
   color: var(--muted);
 }
+
+/* Layout aliases for the current JSX */
+.topbarButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--motion-fast), color var(--motion-fast), transform var(--motion-fast);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.topbarButton:hover {
+  background: var(--panel-soft);
+  color: var(--text);
+}
+
+.topbarButtonActive {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.topbarButton svg,
+.notificationButton svg,
+.logoutButton svg,
+.aiButton svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+}
+
+.menuWrap {
+  position: relative;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 210px;
+  padding: 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--surface-shadow-md);
+  display: grid;
+  gap: 6px;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.dropdownItem:hover {
+  background: var(--panel-soft);
+}
+
+.shortcutHint {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.hamburger {
+  width: 16px;
+  display: grid;
+  gap: 3px;
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.panelsIcon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  position: relative;
+}
+
+.panelsIcon::before,
+.panelsIcon::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.panelsIcon::before { left: 4px; }
+.panelsIcon::after { right: 4px; }
+
+.notificationButton {
+  composes: topbarButton;
+}
+
+.aiButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fff 0%, var(--panel-soft) 100%);
+  color: var(--heading);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform var(--motion-fast), box-shadow var(--motion-fast), border-color var(--motion-fast);
+}
+
+.aiButton:hover {
+  transform: translateY(-1px);
+  border-color: rgba(var(--accent-rgb), 0.35);
+  box-shadow: var(--surface-shadow);
+}
+
+.logoutButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logoutButton:hover {
+  background: var(--panel-soft);
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 8px 8px 14px;
+  font-size: 29px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.logoDark {
+  color: var(--heading);
+}
+
+.logoAccent {
+  color: var(--accent);
+}
+
+.settingsItem {
+  margin-top: 10px;
+}
+
+.profileBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel-soft);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.profileBox:hover,
+.profileBoxActive {
+  border-color: rgba(var(--accent-rgb), 0.25);
+  background: var(--accent-soft);
+}
+
+.profileAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.profileText {
+  min-width: 0;
+}
+
+.profileName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--heading);
+}
+
+.profileRole {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.content {
+  padding: 28px;
+  overflow: auto;
+}
+
+.dashboardSection,
+.profileLayout,
+.settingsContent {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+}
+
+.settingsLayout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.settingsContentFull {
+  grid-column: 1 / -1;
+}
+
+.settingsSidebar {
+  position: sticky;
+  top: 80px;
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--surface-radius);
+  box-shadow: var(--surface-shadow);
+}
+
+.settingsSidebarTitle {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.settingsSidebarList {
+  display: grid;
+  gap: 8px;
+}
+
+.settingsSidebarItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.settingsSidebarItem:hover,
+.settingsSidebarItemActive {
+  background: var(--panel-soft);
+  border-color: var(--border);
+}
+
+.settingsSidebarIcon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+}
+
+.settingsSidebarLabel {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.settingsHeader {
+  display: grid;
+  gap: 8px;
+}
+
+.settingsHeader h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 2.6rem);
+  line-height: 1.05;
+  color: var(--heading);
+  letter-spacing: -0.04em;
+}
+
+.settingsHeader p {
+  margin: 0;
+  max-width: 720px;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.integrationNotice {
+  padding: 14px 16px;
+  border: 1px solid rgba(var(--accent-rgb), 0.22);
+  border-radius: 14px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.card {
+  grid-column: span 6;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--surface-radius);
+  background: var(--panel);
+  box-shadow: var(--surface-shadow);
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.cardWide {
+  grid-column: 1 / -1;
+}
+
+.cardEyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.cardTitle {
+  margin: -6px 0 0;
+  color: var(--heading);
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metric {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+}
+
+.metric span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.metric strong {
+  font-size: 1.7rem;
+  line-height: 1;
+  color: var(--heading);
+}
+
+.metric small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.table {
+  display: grid;
+  gap: 10px;
+}
+
+.tableHead,
+.tableRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  align-items: center;
+}
+
+.tableHead {
+  padding: 0 0 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tableRow {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text);
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.tableRow span:first-child {
+  font-weight: 700;
+  color: var(--heading);
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.detailLabel,
+.detailHelper {
+  color: var(--muted);
+}
+
+.detailValueBox {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  text-align: right;
+}
+
+.detailValue {
+  color: var(--heading);
+}
+
+.photoOption {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  background: var(--panel-soft);
+}
+
+.photoPreview {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.photoMeta {
+  display: grid;
+  gap: 4px;
+}
+
+.photoMeta span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.photoAction {
+  margin-left: auto;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: var(--heading);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hiddenFileInput {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.emptyState {
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  padding: 24px;
+  border: 1px dashed var(--border);
+  border-radius: 18px;
+  background: var(--panel);
+  color: var(--muted);
+  text-align: center;
+}
+
+.placeholderBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.logoutModalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 17, 32, 0.38);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 200;
+}
+
+.logoutModal {
+  width: min(100%, 420px);
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--panel);
+  box-shadow: var(--surface-shadow-lg);
+  display: grid;
+  gap: 14px;
+}
+
+.logoutEyebrow {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.logoutModal h2,
+.logoutModal p {
+  margin: 0;
+}
+
+.logoutActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.logoutSecondaryButton,
+.logoutPrimaryButton {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.logoutSecondaryButton {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.logoutPrimaryButton {
+  border: none;
+  background: var(--heading);
+  color: #fff;
+}
+
+@media (max-width: 1100px) {
+  .settingsLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .settingsSidebar {
+    position: static;
+  }
+
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .appShell,
+  .appShellCollapsed {
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px auto 1fr;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card,
+  .cardWide {
+    grid-column: 1 / -1;
+  }
+
+  .topbar {
+    padding-right: 12px;
+  }
+
+  .topbarActions {
+    gap: 4px;
+  }
+
+  .aiButton span,
+  .logoutButton span,
+  .navLabel,
+  .profileText {
+    display: none;
+  }
+
+  .logoRow {
+    font-size: 24px;
+    padding-bottom: 10px;
+  }
+}
