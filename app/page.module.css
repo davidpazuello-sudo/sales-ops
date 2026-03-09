@@ -643,10 +643,58 @@
   margin-top: 18px;
 }
 
+.sellerPageHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.sellerPageHeader .settingsHeader p {
+  display: none;
+}
+
+.sellerFilterBox {
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sellerFilterBox span {
+  color: var(--muted);
+  font-size: calc(12px * var(--font-scale));
+  font-weight: 700;
+}
+
+.sellerFilterBox input {
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.sellerFilterBox input:focus {
+  border-color: rgba(222, 131, 0, 0.58);
+  box-shadow: 0 0 0 4px rgba(222, 131, 0, 0.08);
+}
+
+.sellerProfileContainer {
+  border-radius: var(--surface-radius);
+  background: var(--panel);
+  box-shadow: var(--surface-shadow);
+  padding: 12px;
+}
+
 .sellerProfileCard {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-height: 100%;
   padding: calc(18px * var(--density-scale));
   border-radius: calc(var(--surface-radius) - 2px);
   background: linear-gradient(180deg, var(--panel), var(--panel-soft));
@@ -1117,6 +1165,15 @@
   .previewPanel,
   .sellerProfilesGrid {
     grid-template-columns: 1fr;
+  }
+
+  .sellerPageHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sellerFilterBox {
+    min-width: 0;
   }
 
   .cardWide {

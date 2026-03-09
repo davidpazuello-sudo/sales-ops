@@ -44,8 +44,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <body suppressHydrationWarning className={`${manrope.variable} ${ibmPlexSans.variable} ${sourceSans.variable} ${montserrat.variable} ${nunitoSans.variable} ${workSans.variable}`}>
+    <html
+      lang="pt-BR"
+      suppressHydrationWarning
+      className={`${manrope.variable} ${ibmPlexSans.variable} ${sourceSans.variable} ${montserrat.variable} ${nunitoSans.variable} ${workSans.variable}`}
+    >
+      <body suppressHydrationWarning>
         {children}
       </body>
     </html>

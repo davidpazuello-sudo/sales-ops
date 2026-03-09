@@ -469,67 +469,60 @@ function DealsContent({ dashboardData }) {
 }
 
 function SellersContent({ dashboardData }) {
+  const [sellerFilter, setSellerFilter] = useState("");
+  const filteredSellers = dashboardData.sellers.filter((seller) =>
+    seller.name.toLowerCase().includes(sellerFilter.trim().toLowerCase()),
+  );
+
   return (
     <section className={styles.dashboardSection}>
-      <header className={styles.settingsHeader}>
-        <h1>Vendedores</h1>
-        <p>Visao de performance, ritmo comercial, coaching e prioridades do time via HubSpot.</p>
+      <header className={styles.sellerPageHeader}>
+        <div className={styles.settingsHeader}>
+          <h1>Vendedores</h1>
+        </div>
+        <label className={styles.sellerFilterBox}>
+          <span>Filtrar por nome</span>
+          <input
+            type="text"
+            value={sellerFilter}
+            onChange={(event) => setSellerFilter(event.target.value)}
+            placeholder="Buscar vendedor"
+          />
+        </label>
       </header>
 
-      <div className={styles.grid}>
-        <Card eyebrow="RESUMO" title="Panorama do time" wide>
-          <div className={styles.metrics}>
-            <Metric title="Vendedores ativos" value={`${dashboardData.summary.sellersActive || 0}`} note="Com negocios atribuidos na HubSpot" />
-            <Metric title="Pipeline aberto" value={`R$ ${Math.round((dashboardData.summary.totalPipeline || 0) / 1000)}k`} note="Valor somado dos negocios em aberto" />
-            <Metric title="Negocios parados" value={`${dashboardData.summary.stalledDeals || 0}`} note="Sem touch recente na HubSpot" />
-          </div>
-        </Card>
-
-        <Card eyebrow="PERFIS" title="Perfis do time" wide>
-          <div className={styles.sellerProfilesGrid}>
-            {dashboardData.sellers.map((seller) => (
-              <article key={seller.name} className={styles.sellerProfileCard}>
-                <div className={styles.sellerProfileTop}>
-                  <div className={styles.sellerAvatar}>{seller.initials}</div>
-                  <div className={styles.sellerIdentity}>
-                    <strong>{seller.name}</strong>
-                    <span>{seller.team}</span>
-                  </div>
+      <div className={styles.sellerProfilesGrid}>
+        {filteredSellers.map((seller) => (
+          <article key={seller.name} className={styles.sellerProfileContainer}>
+            <article className={styles.sellerProfileCard}>
+              <div className={styles.sellerProfileTop}>
+                <div className={styles.sellerAvatar}>{seller.initials}</div>
+                <div className={styles.sellerIdentity}>
+                  <strong>{seller.name}</strong>
+                  <span>{seller.team}</span>
                 </div>
+              </div>
 
-                <div className={styles.sellerStats}>
-                  <div>
-                    <span>Meta</span>
-                    <strong>{seller.metaPercent}%</strong>
-                  </div>
-                  <div>
-                    <span>Pipeline</span>
-                    <strong>{seller.pipelineLabel}</strong>
-                  </div>
+              <div className={styles.sellerStats}>
+                <div>
+                  <span>Meta</span>
+                  <strong>{seller.metaPercent}%</strong>
                 </div>
-
-                <div className={styles.sellerStatusRow}>
-                  <span className={styles.sellerStatusLabel}>Status</span>
-                  <strong>{seller.status}</strong>
+                <div>
+                  <span>Pipeline</span>
+                  <strong>{seller.pipelineLabel}</strong>
                 </div>
+              </div>
 
-                <p className={styles.sellerNote}>{seller.note}</p>
-              </article>
-            ))}
-          </div>
-        </Card>
+              <div className={styles.sellerStatusRow}>
+                <span className={styles.sellerStatusLabel}>Status</span>
+                <strong>{seller.status}</strong>
+              </div>
 
-        <Card eyebrow="RANKING" title="Performance por vendedor" wide>
-          <Table head={["Vendedor", "Meta", "Pipeline", "Saude", "Status"]} rows={dashboardData.sellers.map((seller) => [seller.name, `${seller.metaPercent}%`, seller.pipelineLabel, seller.health, seller.status])} />
-        </Card>
-
-        <Card eyebrow="ATENCAO" title="Fila de coaching">
-          <Table head={["Vendedor", "Sinal", "Prioridade"]} rows={dashboardData.alerts} />
-        </Card>
-
-        <Card eyebrow="AGENDA" title="Proximas acoes">
-          <Table head={["Negocio", "Dono", "Situacao"]} rows={dashboardData.deals.slice(0, 3).map((deal) => [deal.name, deal.owner, deal.staleLabel])} />
-        </Card>
+              <p className={styles.sellerNote}>{seller.note}</p>
+            </article>
+          </article>
+        ))}
       </div>
     </section>
   );
