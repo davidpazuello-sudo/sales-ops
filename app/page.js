@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
 const navItems = [
@@ -94,6 +95,16 @@ function ChevronSmallIcon() {
   );
 }
 
+function LogoutIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M14 7V5.8A1.8 1.8 0 0 0 12.2 4H6.8A1.8 1.8 0 0 0 5 5.8v12.4A1.8 1.8 0 0 0 6.8 20h5.4a1.8 1.8 0 0 0 1.8-1.8V17" />
+      <path d="M10 12h9" />
+      <path d="M16 8l4 4-4 4" />
+    </svg>
+  );
+}
+
 function BaseIcon({ children }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true">{children}</svg>;
 }
@@ -159,10 +170,12 @@ function SettingsContent({ section }) {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const [activeNav, setActiveNav] = useState("settings");
   const [activeConfig, setActiveConfig] = useState("account");
   const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoutPromptOpen, setLogoutPromptOpen] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -170,7 +183,10 @@ export default function HomePage() {
       if (!menuRef.current?.contains(event.target)) setMenuOpen(false);
     }
     function closeOnEscape(event) {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        setLogoutPromptOpen(false);
+      }
     }
     document.addEventListener("mousedown", closeOnOutside);
     document.addEventListener("keydown", closeOnEscape);
@@ -194,6 +210,10 @@ export default function HomePage() {
           <button type="button" className={styles.topbarButton} aria-label="Voltar" onClick={() => window.history.back()}><SimpleArrow /></button>
           <button type="button" className={styles.topbarButton} aria-label="Avançar" onClick={() => window.history.forward()}><SimpleArrow right /></button>
         </div>
+        <button type="button" className={styles.logoutButton} onClick={() => setLogoutPromptOpen(true)}>
+          <LogoutIcon />
+          <span>Sair</span>
+        </button>
       </header>
 
       <aside className={styles.sidebar}>
@@ -246,6 +266,20 @@ export default function HomePage() {
           <div className={styles.emptyState}><div className={styles.placeholderBadge}>Em breve</div><span>{navItems.find((item) => item.id === activeNav)?.label}</span></div>
         )}
       </section>
+
+      {logoutPromptOpen ? (
+        <div className={styles.logoutModalBackdrop} role="presentation" onClick={() => setLogoutPromptOpen(false)}>
+          <div className={styles.logoutModal} role="dialog" aria-modal="true" aria-labelledby="logout-title" onClick={(event) => event.stopPropagation()}>
+            <span className={styles.logoutEyebrow}>ENCERRAR SESSAO</span>
+            <h2 id="logout-title">Deseja sair mesmo?</h2>
+            <p>Ao continuar, você será redirecionado para a tela de login do SalesOps.</p>
+            <div className={styles.logoutActions}>
+              <button type="button" className={styles.logoutSecondaryButton} onClick={() => setLogoutPromptOpen(false)}>Cancelar</button>
+              <button type="button" className={styles.logoutPrimaryButton} onClick={() => router.push("/login")}>Sair agora</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }

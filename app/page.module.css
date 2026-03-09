@@ -15,6 +15,7 @@
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 10px;
   background: #fff;
   border-bottom: 1px solid #e3e7ee;
@@ -38,6 +39,7 @@
 }
 
 .topbarButton,
+.logoutButton,
 .dropdownItem,
 .navItem,
 .settingsSidebarItem {
@@ -57,7 +59,18 @@
   color: #a4afbf;
 }
 
+.logoutButton {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #5c6f8e;
+}
+
 .topbarButton:hover,
+.logoutButton:hover,
 .topbarButtonActive,
 .dropdownItem:hover,
 .navItem:hover,
@@ -66,6 +79,7 @@
 }
 
 .topbarButton svg,
+.logoutButton svg,
 .navIcon svg,
 .settingsSidebarIcon svg,
 .dropdownItem svg {
@@ -79,6 +93,17 @@
   width: 15px;
   height: 15px;
   stroke-width: 2;
+}
+
+.logoutButton svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 1.9;
+}
+
+.logoutButton span {
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .hamburger {
@@ -529,6 +554,76 @@
   font-weight: 700;
 }
 
+.logoutModalBackdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(22, 40, 79, 0.28);
+  backdrop-filter: blur(8px);
+  z-index: 30;
+}
+
+.logoutModal {
+  width: min(100%, 420px);
+  padding: 28px;
+  border-radius: 28px;
+  background: #fcfcfd;
+  box-shadow: 0 24px 60px rgba(28, 45, 76, 0.18);
+}
+
+.logoutEyebrow {
+  color: #99a6bc;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.logoutModal h2 {
+  margin: 12px 0 0;
+  color: #18305d;
+  font-size: 30px;
+  line-height: 1.05;
+}
+
+.logoutModal p {
+  margin: 12px 0 0;
+  color: #6d7f99;
+  line-height: 1.6;
+}
+
+.logoutActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.logoutPrimaryButton,
+.logoutSecondaryButton {
+  min-width: 124px;
+  height: 46px;
+  padding: 0 18px;
+  border-radius: 14px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.logoutSecondaryButton {
+  border: 1px solid #e2e8f0;
+  background: #f4f7fb;
+  color: #294162;
+}
+
+.logoutPrimaryButton {
+  border: 0;
+  background: linear-gradient(135deg, #de8300, #f3a43d);
+  color: #fff;
+  box-shadow: 0 16px 28px rgba(222, 131, 0, 0.22);
+}
+
 .appShellCollapsed .logoRow {
   padding: 0;
   justify-content: center;
@@ -613,5 +708,28 @@
 
   .dropdownMenu {
     left: 0;
+  }
+
+  .logoutButton {
+    padding: 0 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    gap: 12px;
+  }
+
+  .logoutButton span {
+    display: none;
+  }
+
+  .logoutActions {
+    flex-direction: column-reverse;
+  }
+
+  .logoutPrimaryButton,
+  .logoutSecondaryButton {
+    width: 100%;
   }
 }
