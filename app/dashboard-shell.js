@@ -522,6 +522,8 @@ function ReportsContent({ dashboardData }) {
 function DealsContent({ dashboardData }) {
   const [boardDeals, setBoardDeals] = useState(dashboardData.deals);
   const [draggedDealId, setDraggedDealId] = useState("");
+  const [ownerFilter, setOwnerFilter] = useState("todos");
+  const [activityWeeksFilter, setActivityWeeksFilter] = useState("1");
   const stageOrder = ["Discovery", "Proposal", "Negotiation", "Commit", "Closed Won"];
 
   useEffect(() => {
@@ -544,10 +546,23 @@ function DealsContent({ dashboardData }) {
     }).format(numericValue);
   };
 
+  const parseStaleDays = (staleLabel) => {
+    const days = Number.parseInt(String(staleLabel), 10);
+    return Number.isNaN(days) ? 0 : days;
+  };
+
+  const ownerOptions = Array.from(new Set(boardDeals.map((deal) => deal.owner))).sort((a, b) => a.localeCompare(b));
+  const maxDays = Number(activityWeeksFilter) * 7;
+  const visibleDeals = boardDeals.filter((deal) => {
+    const ownerMatch = ownerFilter === "todos" || deal.owner === ownerFilter;
+    const activityMatch = parseStaleDays(deal.staleLabel) <= maxDays;
+    return ownerMatch && activityMatch;
+  });
+
   const stages = Array.from(new Set([...stageOrder, ...boardDeals.map((deal) => deal.stage)]));
 
   const boardColumns = stages.map((stage) => {
-    const stageDeals = boardDeals.filter((deal) => deal.stage === stage);
+    const stageDeals = visibleDeals.filter((deal) => deal.stage === stage);
     const totalValue = stageDeals.reduce((sum, deal) => {
       const numericValue = Number.parseFloat(
         String(deal.amountLabel).replace(/[^\d,]/g, "").replace(/\./g, "").replace(",", "."),
@@ -587,6 +602,28 @@ function DealsContent({ dashboardData }) {
       <header className={styles.settingsHeader}>
         <h1>Negócios</h1>
       </header>
+
+      <div className={styles.dealsFilters}>
+        <label className={styles.dealsFilterField}>
+          <span>Por proprietario</span>
+          <select value={ownerFilter} onChange={(event) => setOwnerFilter(event.target.value)}>
+            <option value="todos">Todos</option>
+            {ownerOptions.map((owner) => (
+              <option key={owner} value={owner}>{owner}</option>
+            ))}
+          </select>
+        </label>
+
+        <label className={styles.dealsFilterField}>
+          <span>Tempo da ultima atividade</span>
+          <select value={activityWeeksFilter} onChange={(event) => setActivityWeeksFilter(event.target.value)}>
+            <option value="1">1 semana</option>
+            <option value="2">2 semanas</option>
+            <option value="3">3 semanas</option>
+            <option value="4">4 semanas</option>
+          </select>
+        </label>
+      </div>
 
       <section className={styles.pipelineBoard}>
         {boardColumns.map((column) => (
@@ -1105,10 +1142,14 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
         <Card eyebrow="NEGOCIOS" title="Pipeline do vendedor" wide>
           <div className={styles.dealList}>
             {sellerDeals.length ? sellerDeals.map((deal) => (
-              <article key={deal.id} className={styles.dealListItem}>
+              <article key={deal.id} className={`${styles.dealListItem} ${styles.sellerDealListItem}`.trim()}>
                 <div className={styles.dealIdentity}>
                   <strong>{deal.name}</strong>
-                  <span>{deal.stage}</span>
+                  <span>{deal.owner}</span>
+                </div>
+                <div className={styles.dealMeta}>
+                  <strong>{deal.stage}</strong>
+                  <span>Etapa da pipeline</span>
                 </div>
                 <div className={styles.dealMeta}>
                   <strong>{deal.amountLabel}</strong>

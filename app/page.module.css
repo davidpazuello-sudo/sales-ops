@@ -1174,8 +1174,44 @@
   align-items: start;
 }
 
+.dealsFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 14px 0 16px;
+}
+
+.dealsFilterField {
+  display: grid;
+  gap: 8px;
+  min-width: 220px;
+}
+
+.dealsFilterField span {
+  color: var(--muted);
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 700;
+}
+
+.dealsFilterField select {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.dealsFilterField select:focus {
+  border-color: rgba(222, 131, 0, 0.58);
+  box-shadow: 0 0 0 4px rgba(222, 131, 0, 0.08);
+}
+
 .pipelineColumn {
   display: grid;
+  grid-template-rows: auto min-content;
   gap: 12px;
   min-height: 520px;
   padding: calc(14px * var(--density-scale));
@@ -1218,9 +1254,10 @@
 }
 
 .pipelineColumnBody {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  align-content: start;
+  justify-content: flex-start;
 }
 
 .pipelineDealCard {
@@ -1557,6 +1594,10 @@
   padding: calc(11px * var(--density-scale)) calc(13px * var(--density-scale));
   border-radius: 13px;
   background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+}
+
+.sellerDealListItem {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 0.8fr);
 }
 
 .dealIdentity,
