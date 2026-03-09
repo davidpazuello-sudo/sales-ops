@@ -23,6 +23,7 @@ const configSections = [
   { id: "hubspot", label: "Integração HubSpot", description: "Status da conexão, chave, sync, mapeamento e log de erros." },
   { id: "notifications", label: "Notificações & Alertas", description: "Canais, thresholds, metas e resumos automáticos." },
   { id: "ai", label: "IA & Diagnósticos", description: "Modelo ativo, voz, dados de contexto e sensibilidade diagnóstica." },
+  { id: "personalize", label: "Personalizar", description: "Tema, fonte, escala, contraste e comportamento visual da interface." },
   { id: "exports", label: "Relatórios & Exportação", description: "Agendamento, formato, marca d'água e templates por cargo." },
   { id: "storage", label: "Gestão de Mídia & Storage", description: "Uso, retenção, STT, indexação e provedor com LGPD." },
   { id: "compliance", label: "Auditoria & Compliance", description: "Trilha imutável, masking visual e governança LGPD." },
@@ -74,6 +75,19 @@ const maskingRows = [
   ["Telefone", "✓", "✓", "✕"],
   ["Email pessoal", "✓", "✕", "✕"],
   ["Receita prevista", "✓", "✓", "✓"],
+];
+
+const themeOptions = ["Claro ativo", "Escuro", "Automático"];
+const fontOptions = ["Manrope", "IBM Plex Sans", "Source Sans 3"];
+const fontSizeOptions = ["Pequena", "Média", "Grande"];
+const densityOptions = ["Compacta", "Confortável", "Expandida"];
+const personalizationRows = [
+  ["Contraste elevado", "Desativado"],
+  ["Animações sutis", "Ativado"],
+  ["Sidebar recolhida ao abrir", "Desativado"],
+  ["Cards com borda reforçada", "Ativado"],
+  ["Mostrar atalhos de teclado", "Ativado"],
+  ["Prévia instantânea", "Ativada"],
 ];
 
 function MenuIcon() {
@@ -162,6 +176,19 @@ function Row({ label, value, helper }) {
   );
 }
 
+function PhotoOption() {
+  return (
+    <div className={styles.photoOption}>
+      <div className={styles.photoPreview}>?</div>
+      <div className={styles.photoMeta}>
+        <strong>Foto do perfil</strong>
+        <span>JPG ou PNG, ate 5 MB.</span>
+      </div>
+      <button type="button" className={styles.photoAction}>Adicionar foto</button>
+    </div>
+  );
+}
+
 function Card({ eyebrow, title, children, wide = false }) {
   return <section className={`${styles.card} ${wide ? styles.cardWide : ""}`.trim()}><span className={styles.cardEyebrow}>{eyebrow}</span><h2 className={styles.cardTitle}>{title}</h2>{children}</section>;
 }
@@ -183,11 +210,27 @@ function Metric({ title, value, note }) {
   return <div className={styles.metric}><span>{title}</span><strong>{value}</strong><small>{note}</small></div>;
 }
 
+function OptionGroup({ title, options }) {
+  return (
+    <div className={styles.optionGroup}>
+      <span className={styles.optionGroupLabel}>{title}</span>
+      <div className={styles.optionPills}>
+        {options.map((option, index) => (
+          <button key={option} type="button" className={`${styles.optionPill} ${index === 0 ? styles.optionPillActive : ""}`.trim()}>
+            {option}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function SettingsContent({ section }) {
-  if (section === "account") return <div className={styles.grid}><Card eyebrow="PERFIL" title="Conta & Acesso"><Row label="Nome" value="Usuário SalesOps" /><Row label="Senha" value="Última troca há 14 dias" /><Row label="2FA" value="Obrigatório para gestão" helper="SMS + autenticador" /><Row label="Sessões ativas" value="5 dispositivos" helper="2 navegadores e 3 mobile" /></Card><Card eyebrow="PERMISSÕES" title="Permissões por cargo"><Table head={["Cargo", "Acesso"]} rows={permissionRows} /></Card></div>;
+  if (section === "account") return <div className={styles.grid}><Card eyebrow="PERFIL" title="Conta & Acesso"><PhotoOption /><Row label="Nome" value="Usuário SalesOps" /><Row label="Senha" value="Última troca há 14 dias" /><Row label="2FA" value="Obrigatório para gestão" helper="SMS + autenticador" /><Row label="Sessões ativas" value="5 dispositivos" helper="2 navegadores e 3 mobile" /></Card><Card eyebrow="PERMISSÕES" title="Permissões por cargo"><Table head={["Cargo", "Acesso"]} rows={permissionRows} /></Card></div>;
   if (section === "hubspot") return <div className={styles.grid}><Card eyebrow="STATUS" title="Integração HubSpot"><Row label="Conexão" value="Ativa" helper="Último handshake hoje às 09:01" /><Row label="API key" value="•••• •••• •••• 98K2" /><Row label="Sync" value="A cada 5 minutos" /></Card><Card eyebrow="MAPEAMENTO" title="Campos sincronizados" wide><Table head={["SalesOps", "HubSpot", "Status"]} rows={mappingRows} /></Card><Card eyebrow="LOG" title="Erros recentes"><Table head={["Hora", "Erro", "Gravidade"]} rows={errorRows} /></Card></div>;
   if (section === "notifications") return <div className={styles.grid}><Card eyebrow="CANAIS" title="Notificações & Alertas"><Row label="Email" value="Ativo" helper="comercial@salesops.ai" /><Row label="Push" value="Ativo" helper="Chrome + mobile" /><Row label="Resumo automático" value="Diário" /></Card><Card eyebrow="THRESHOLDS" title="Metas e thresholds" wide><div className={styles.metrics}>{metricRows.map((item) => <Metric key={item[0]} title={item[0]} value={item[1]} note={item[2]} />)}</div></Card></div>;
   if (section === "ai") return <div className={styles.grid}><Card eyebrow="MODELO" title="IA & Diagnósticos"><Row label="Modelo ativo" value="GPT SalesOps Analyst" /><Row label="Assistente de voz" value="Habilitado" /><Row label="Sensibilidade" value="Moderada" helper="menos ruído, mais sinais de risco" /></Card><Card eyebrow="DADOS" title="Dados que alimentam a IA" wide><div className={styles.tags}><span>Negócios</span><span>Atividades</span><span>Calls gravadas</span><span>Sentimento do vendedor</span><span>Próximas tarefas</span></div></Card></div>;
+  if (section === "personalize") return <div className={styles.grid}><Card eyebrow="APARÊNCIA" title="Tema e tipografia"><OptionGroup title="Tema" options={themeOptions} /><OptionGroup title="Fonte principal" options={fontOptions} /><OptionGroup title="Tamanho das letras" options={fontSizeOptions} /></Card><Card eyebrow="INTERFACE" title="Densidade e leitura"><OptionGroup title="Densidade" options={densityOptions} /><Table head={["Preferência", "Status"]} rows={personalizationRows} /></Card><Card eyebrow="VISUAL" title="Prévia das personalizações" wide><div className={styles.previewPanel}><div className={styles.previewCard}><span>Cards</span><strong>Raio 20px</strong><small>Hierarquia clara com bordas suaves.</small></div><div className={styles.previewCard}><span>Texto</span><strong>Escala média</strong><small>Leitura equilibrada para dashboards e tabelas.</small></div><div className={styles.previewCard}><span>Navegação</span><strong>Confortável</strong><small>Espaçamentos consistentes e foco visual reforçado.</small></div></div></Card></div>;
   if (section === "exports") return <div className={styles.grid}><Card eyebrow="AGENDAMENTO" title="Relatórios & Exportação"><Row label="Envio semanal" value="Segunda, 07:30" /><Row label="Formato" value="PDF + XLSX" /><Row label="Marca d'água" value="Confidencial" /></Card><Card eyebrow="TEMPLATES" title="Templates por cargo" wide><Table head={["Cargo", "Template", "Formato"]} rows={reportRows} /></Card></div>;
   if (section === "storage") return <div className={styles.grid}><Card eyebrow="USO" title="Gestão de Mídia & Storage"><div className={styles.usage}><div className={styles.usageTop}><strong>38.4 / 100 GB</strong><span>38%</span></div><div className={styles.usageBar}><span style={{ width: "38.4%" }} /></div><p>Gravações semanais, áudios e anexos operacionais.</p></div><Row label="Hot storage" value="45 dias" /><Row label="Cold storage" value="365 dias" helper="arquivamento automático" /></Card><Card eyebrow="STT" title="Fila de transcrição em tempo real" wide><Table head={["Arquivo", "Status", "Progresso"]} rows={queueRows} /></Card><Card eyebrow="PROVEDOR" title="Indexação e provedor"><Row label="Provedor" value="Azure Blob Storage" /><Row label="Região" value="Brazil South" helper="aderência LGPD" /><Row label="Indexação IA" value="Ativa" /></Card></div>;
   return <div className={styles.grid}><Card eyebrow="AUDITORIA" title="Eventos recentes" wide><Table head={["Quem", "O quê", "Quando"]} rows={auditRows} /></Card><Card eyebrow="MASKING" title="Matriz visual por campo e cargo"><Table head={["Campo", "Admin", "Gestor", "Vendedor"]} rows={maskingRows} matrix /></Card><Card eyebrow="LGPD" title="Consentimento e conformidade"><Row label="Consentimento" value="Registrado por contato" /><Row label="Esquecimento" value="Fluxo habilitado" helper="remoção em até 7 dias" /><Row label="Relatório" value="Atualizado hoje" /></Card></div>;
@@ -197,6 +240,7 @@ export default function HomePage() {
   const router = useRouter();
   const [activeNav, setActiveNav] = useState("settings");
   const [activeConfig, setActiveConfig] = useState("hubspot");
+  const [profileViewOpen, setProfileViewOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoutPromptOpen, setLogoutPromptOpen] = useState(false);
@@ -279,16 +323,17 @@ export default function HomePage() {
           </nav>
         </div>
         <div>
-          <button type="button" onClick={() => setActiveNav("settings")} className={`${styles.navItem} ${styles.settingsItem} ${activeNav === "settings" ? styles.navItemActive : ""}`.trim()} title={collapsed ? "Configurações" : undefined}>
+          <button type="button" onClick={() => { setActiveNav("settings"); setProfileViewOpen(false); }} className={`${styles.navItem} ${styles.settingsItem} ${activeNav === "settings" && !profileViewOpen ? styles.navItemActive : ""}`.trim()} title={collapsed ? "Configurações" : undefined}>
             <span className={styles.navIcon}>{getNavIcon("settings")}</span>
             <span className={styles.navLabel}>Configurações</span>
           </button>
           <button
             type="button"
-            className={styles.profileBox}
+            className={`${styles.profileBox} ${profileViewOpen ? styles.profileBoxActive : ""}`.trim()}
             onClick={() => {
-              setActiveNav("settings");
+              setActiveNav("profile");
               setActiveConfig("account");
+              setProfileViewOpen(true);
             }}
           >
             <div className={styles.profileAvatar}>?</div>
@@ -300,23 +345,37 @@ export default function HomePage() {
       <section className={styles.content}>
         {activeNav === "settings" ? (
           <section className={styles.settingsLayout}>
-            <aside className={styles.settingsSidebar}>
-              <div className={styles.settingsSidebarTitle}>CONFIGURAÇÕES</div>
-              <div className={styles.settingsSidebarList}>
-                {configSections.map((item) => (
-                  <button key={item.id} type="button" onClick={() => setActiveConfig(item.id)} className={`${styles.settingsSidebarItem} ${activeConfig === item.id ? styles.settingsSidebarItemActive : ""}`.trim()}>
-                    <span className={styles.settingsSidebarIcon}>{getConfigIcon(item.id)}</span>
-                    <span className={styles.settingsSidebarLabel}>{item.label}</span>
-                  </button>
-                ))}
-              </div>
-            </aside>
-            <div className={styles.settingsContent}>
+            {!profileViewOpen ? (
+              <aside className={styles.settingsSidebar}>
+                <div className={styles.settingsSidebarTitle}>CONFIGURAÇÕES</div>
+                <div className={styles.settingsSidebarList}>
+                  {configSections.map((item) => (
+                    <button key={item.id} type="button" onClick={() => { setActiveConfig(item.id); setProfileViewOpen(false); }} className={`${styles.settingsSidebarItem} ${activeConfig === item.id ? styles.settingsSidebarItemActive : ""}`.trim()}>
+                      <span className={styles.settingsSidebarIcon}>{getConfigIcon(item.id)}</span>
+                      <span className={styles.settingsSidebarLabel}>{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </aside>
+            ) : null}
+            <div className={`${styles.settingsContent} ${profileViewOpen ? styles.settingsContentFull : ""}`.trim()}>
               <header className={styles.settingsHeader}>
                 <h1>{currentSection?.label}</h1>
                 <p>{currentSection?.description}</p>
               </header>
-              <SettingsContent section={activeConfig} />
+              {profileViewOpen ? <div className={styles.profileStandalone}><SettingsContent section="account" /></div> : <SettingsContent section={activeConfig} />}
+            </div>
+          </section>
+        ) : activeNav === "profile" ? (
+          <section className={styles.profileLayout}>
+            <div className={`${styles.settingsContent} ${styles.settingsContentFull}`.trim()}>
+              <header className={styles.settingsHeader}>
+                <h1>{accountSection.label}</h1>
+                <p>{accountSection.description}</p>
+              </header>
+              <div className={styles.profileStandalone}>
+                <SettingsContent section="account" />
+              </div>
             </div>
           </section>
         ) : (
