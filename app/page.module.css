@@ -1,7 +1,7 @@
 .appShell {
   display: grid;
   grid-template-columns: 164px 1fr;
-  grid-template-rows: 66px 1fr;
+  grid-template-rows: 52px 1fr;
   min-height: 100vh;
   background: #f6f7fa;
   transition: grid-template-columns 180ms ease;
@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px;
+  padding: 0 12px;
   background: #fff;
   border-bottom: 1px solid #e3e7ee;
 }
@@ -50,9 +50,9 @@
 }
 
 .topbarButton {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -60,9 +60,9 @@
 }
 
 .logoutButton {
-  height: 36px;
-  padding: 0 14px;
-  border-radius: 12px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 10px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -90,19 +90,19 @@
 }
 
 .topbarButton svg {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   stroke-width: 2;
 }
 
 .logoutButton svg {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   stroke-width: 1.9;
 }
 
 .logoutButton span {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -176,7 +176,7 @@
 }
 
 .logoRow {
-  height: 66px;
+  height: 52px;
   display: flex;
   align-items: center;
   padding: 0 10px;
@@ -291,7 +291,7 @@
 .settingsLayout {
   display: grid;
   grid-template-columns: 280px 1fr;
-  min-height: calc(100vh - 66px);
+  min-height: calc(100vh - 52px);
 }
 
 .settingsSidebar {
@@ -693,7 +693,7 @@
   .appShell,
   .appShellCollapsed {
     grid-template-columns: 1fr;
-    grid-template-rows: 66px auto 1fr;
+    grid-template-rows: 52px auto 1fr;
   }
 
   .sidebar,

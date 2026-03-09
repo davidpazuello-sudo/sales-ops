@@ -1,50 +1,29 @@
 .loginShell {
   min-height: 100vh;
-  height: 100dvh;
+  min-height: 100dvh;
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  overflow: hidden;
+  place-items: center;
+  padding: 24px;
   background:
     radial-gradient(circle at top left, rgba(222, 131, 0, 0.14), transparent 28%),
     linear-gradient(135deg, #f6f7fa 0%, #eef2f7 100%);
 }
 
-.heroPanel,
 .formPanel {
-  position: relative;
-  padding: 34px 40px;
+  width: 100%;
+  display: grid;
+  place-items: center;
 }
 
-.heroPanel {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 22px;
-  border-right: 1px solid #e3e7ee;
+.formCard {
+  width: min(100%, 620px);
+  padding: 36px;
+  border-radius: 34px;
+  background: rgba(252, 252, 253, 0.96);
+  border: 1px solid #e6ebf2;
+  box-shadow: 0 24px 60px rgba(28, 45, 76, 0.08);
 }
 
-.brandRow {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-.logoDark {
-  color: #16284f;
-}
-
-.logoAccent {
-  color: #de8300;
-}
-
-.heroCopy {
-  max-width: 640px;
-}
-
-.eyebrow,
 .cardEyebrow {
   display: inline-block;
   color: #97a5bb;
@@ -53,143 +32,34 @@
   letter-spacing: 0.08em;
 }
 
-.heroCopy h1,
-.formCard h2 {
+.formCard h1 {
   margin: 14px 0 0;
   color: #18305d;
+  font-size: clamp(32px, 4vw, 42px);
   line-height: 1.05;
 }
 
-.heroCopy h1 {
-  max-width: 720px;
-  font-size: clamp(34px, 4.6vw, 60px);
-}
-
-.heroCopy p,
 .formCard p,
 .footerNote span {
   color: #6b7f9d;
   line-height: 1.6;
 }
 
-.heroCopy p {
-  max-width: 560px;
+.formCard p {
+  max-width: 430px;
   margin: 14px 0 0;
   font-size: 15px;
 }
 
-.signalCard,
-.formCard {
-  background: rgba(252, 252, 253, 0.92);
-  border: 1px solid #e6ebf2;
-  box-shadow: 0 24px 60px rgba(28, 45, 76, 0.08);
-}
-
-.signalCard {
-  max-width: 520px;
-  padding: 18px 20px;
-  border-radius: 24px;
-}
-
-.signalHeader {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #1d325a;
-  font-size: 15px;
-}
-
-.signalDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #de8300, #ffb657);
-  box-shadow: 0 0 0 6px rgba(222, 131, 0, 0.12);
-}
-
-.signalGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.signalGrid article {
-  padding: 14px;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #fafbfd, #f2f5f9);
-}
-
-.signalGrid span {
-  display: block;
-  color: #7a8ca7;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.signalGrid strong {
-  display: block;
-  margin-top: 8px;
-  color: #18305d;
-  font-size: 18px;
-}
-
-.trustList {
-  display: grid;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.trustList li {
-  position: relative;
-  padding-left: 24px;
-  color: #5e7290;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.trustList li::before {
-  content: "";
-  position: absolute;
-  top: 8px;
-  left: 0;
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #de8300, #ffb657);
-}
-
-.formPanel {
-  display: grid;
-  place-items: center;
-}
-
-.formCard {
-  width: min(100%, 470px);
-  padding: 28px 28px 24px;
-  border-radius: 26px;
-}
-
-.formCard h2 {
-  font-size: 32px;
-}
-
-.formCard p {
-  margin: 10px 0 0;
-  font-size: 14px;
-}
-
 .form {
   display: grid;
-  gap: 14px;
-  margin-top: 22px;
+  gap: 20px;
+  margin-top: 30px;
 }
 
 .field {
   display: grid;
-  gap: 8px;
+  gap: 12px;
 }
 
 .field span,
@@ -201,10 +71,10 @@
 
 .field input {
   width: 100%;
-  height: 48px;
-  padding: 0 16px;
+  height: 58px;
+  padding: 0 20px;
   border: 1px solid #dfe5ee;
-  border-radius: 16px;
+  border-radius: 20px;
   background: #fff;
   color: #25344b;
   font: inherit;
@@ -223,8 +93,7 @@
 
 .formMeta,
 .checkboxRow,
-.footerNote,
-.secondaryActions {
+.footerNote {
   display: flex;
   align-items: center;
 }
@@ -257,8 +126,8 @@
 
 .primaryButton,
 .secondaryButton {
-  height: 48px;
-  border-radius: 16px;
+  height: 58px;
+  border-radius: 20px;
   border: 0;
   font: inherit;
   font-weight: 800;
@@ -275,18 +144,6 @@
 .primaryButton:hover,
 .secondaryButton:hover {
   transform: translateY(-1px);
-}
-
-.secondaryActions {
-  gap: 12px;
-  margin-top: 14px;
-}
-
-.secondaryButton {
-  flex: 1 1 0;
-  background: #f4f7fb;
-  color: #294162;
-  border: 1px solid #e2e8f0;
 }
 
 .divider {
@@ -316,30 +173,30 @@
   letter-spacing: 0.06em;
 }
 
+.secondaryActions {
+  margin-top: 14px;
+}
+
+.secondaryButton {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f7fb;
+  color: #294162;
+  border: 1px solid #e2e8f0;
+  text-decoration: none;
+}
+
 .footerNote {
   margin-top: 18px;
   padding-top: 16px;
   border-top: 1px solid #edf1f6;
 }
 
-@media (max-width: 1024px) {
-  .loginShell {
-    height: auto;
-    grid-template-columns: 1fr;
-    overflow: visible;
-  }
-
-  .heroPanel {
-    border-right: 0;
-    border-bottom: 1px solid #e3e7ee;
-    justify-content: flex-start;
-  }
-}
-
 @media (max-width: 720px) {
-  .heroPanel,
-  .formPanel {
-    padding: 24px 18px;
+  .loginShell {
+    padding: 18px;
   }
 
   .formCard {
@@ -347,18 +204,20 @@
     border-radius: 24px;
   }
 
-  .formCard h2 {
+  .formCard h1 {
     font-size: 29px;
   }
 
-  .signalGrid {
-    grid-template-columns: 1fr;
-  }
-
   .formMeta,
-  .footerNote,
-  .secondaryActions {
+  .footerNote {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .field input,
+  .primaryButton,
+  .secondaryButton {
+    height: 52px;
+    border-radius: 18px;
   }
 }
