@@ -39,12 +39,29 @@ body {
 
 button {
   font: inherit;
+  font-family: var(--app-font), sans-serif;
 }
 
 input,
 textarea,
 select {
   font: inherit;
+  font-family: var(--app-font), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+strong,
+small,
+label,
+a {
+  font-family: inherit;
 }
 
 html[data-theme="dark"] {

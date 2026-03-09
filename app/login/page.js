@@ -28,7 +28,7 @@ export default function LoginPage() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    router.push("/");
+    router.push("/relatorios");
   }
 
   function handleRequestAccess(event) {

@@ -375,6 +375,16 @@
   padding: calc(34px * var(--density-scale)) calc(38px * var(--density-scale)) calc(42px * var(--density-scale));
 }
 
+.integrationNotice {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: calc(12px * var(--font-scale));
+  font-weight: 700;
+}
+
 .settingsLayout {
   display: grid;
   grid-template-columns: 236px 1fr;
@@ -716,6 +726,41 @@
   margin: 0;
   font-size: calc(12px * var(--font-scale));
   line-height: 1.5;
+}
+
+.dealList {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.dealListItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 0.8fr);
+  gap: 14px;
+  align-items: center;
+  padding: calc(14px * var(--density-scale)) calc(16px * var(--density-scale));
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+}
+
+.dealIdentity,
+.dealMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dealIdentity strong,
+.dealMeta strong {
+  color: var(--heading);
+  font-size: calc(14px * var(--font-scale));
+}
+
+.dealIdentity span,
+.dealMeta span {
+  color: var(--muted);
+  font-size: calc(12px * var(--font-scale));
 }
 
 .optionGroup {
@@ -1090,9 +1135,14 @@
 
   .detailRow,
   .preferenceRow,
-  .photoOption {
+  .photoOption,
+  .dealListItem {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .dealListItem {
+    display: flex;
   }
 
   .detailValueBox {

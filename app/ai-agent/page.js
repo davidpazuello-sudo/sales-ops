@@ -232,7 +232,15 @@ export default function AIAgentPage() {
   }
 
   function openMainView(view) {
-    router.push(`/?view=${view}`);
+    const routeMap = {
+      reports: "/relatorios",
+      sellers: "/vendedores",
+      deals: "/negocios",
+      settings: "/configuracoes",
+      profile: "/perfil",
+    };
+
+    router.push(routeMap[view] || "/relatorios");
   }
 
   return (
