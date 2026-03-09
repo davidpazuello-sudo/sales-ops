@@ -257,6 +257,8 @@ function getInternalMeetingsForSeller(seller) {
       type: "Ritual semanal",
       owner: "Lider comercial",
       summary: "Revisao de forecast, riscos por conta e definicao de proximos passos no HubSpot.",
+      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      audioLabel: "Audio da reuniao semanal",
       notes: [
         "Alinhar prioridades da semana com foco em propostas abertas.",
         "Revisar contas sem atividade acima do SLA.",
@@ -271,6 +273,8 @@ function getInternalMeetingsForSeller(seller) {
       type: "Coaching",
       owner: "Supervisor",
       summary: "Checkpoint individual sobre conversao, postura comercial e execucao do pipeline.",
+      audioUrl: "",
+      audioLabel: "",
       notes: [
         "Revisar postura em discovery e qualificacao.",
         "Mapear objecoes recorrentes nas ultimas oportunidades.",
@@ -285,6 +289,8 @@ function getInternalMeetingsForSeller(seller) {
       type: "Operacao",
       owner: "Sales Ops",
       summary: "Analise de gargalos operacionais, tempos de etapa e consistencia de atualizacao na HubSpot.",
+      audioUrl: "",
+      audioLabel: "",
       notes: [
         "Verificar tempo medio por etapa.",
         "Conferir campos obrigatorios pendentes.",
@@ -645,17 +651,11 @@ function SellerMeetingsContent({ dashboardData, sellerSlug }) {
         <div className={styles.sellerMeetingActions}>
           <button
             type="button"
-            className={styles.secondaryActionButton}
-            onClick={() => router.push(`/vendedores/${sellerSlug}`)}
-          >
-            Voltar ao perfil
-          </button>
-          <button
-            type="button"
             className={styles.primaryActionButton}
             onClick={() => router.push(`/vendedores/${sellerSlug}/reunioes/nova`)}
           >
-            Registrar nova reuniao
+            <MeetingIcon />
+            <span>Registrar nova reuniao</span>
           </button>
         </div>
       </header>
@@ -690,6 +690,7 @@ function SellerMeetingsContent({ dashboardData, sellerSlug }) {
 function SellerMeetingDetailContent({ dashboardData, sellerSlug, meetingId }) {
   const router = useRouter();
   const [meetingAttachments, setMeetingAttachments] = useState([]);
+  const [showAiAnalysis, setShowAiAnalysis] = useState(false);
   const seller = dashboardData.sellers.find((item) => sellerToSlug(item.name) === sellerSlug) || dashboardData.sellers[0];
   const meetings = getInternalMeetingsForSeller(seller);
   const meeting = meetings.find((item) => meetingToSlug(item.id) === meetingId) || meetings[0];
@@ -728,15 +729,6 @@ function SellerMeetingDetailContent({ dashboardData, sellerSlug, meetingId }) {
               ? `Novo registro interno para ${seller.name}, preparado para posterior sincronizacao com a HubSpot.`
               : `${meeting.date} · ${meeting.time} · ${meeting.type}`}
           </p>
-        </div>
-        <div className={styles.sellerMeetingActions}>
-          <button
-            type="button"
-            className={styles.secondaryActionButton}
-            onClick={() => router.push(`/vendedores/${sellerSlug}/reunioes`)}
-          >
-            Voltar para lista
-          </button>
         </div>
       </header>
 
@@ -812,9 +804,42 @@ function SellerMeetingDetailContent({ dashboardData, sellerSlug, meetingId }) {
             </div>
           ) : (
             <div className={styles.meetingDetailStack}>
+              <div className={styles.meetingDetailActions}>
+                <button
+                  type="button"
+                  className={styles.primaryActionButton}
+                  onClick={() => setShowAiAnalysis((value) => !value)}
+                >
+                  <SparkIcon />
+                  <span>{showAiAnalysis ? "Ocultar analise da IA" : "Analisar com IA"}</span>
+                </button>
+              </div>
               <Row label="Responsavel" value={meeting.owner} />
               <Row label="Tipo" value={meeting.type} />
               <Row label="Resumo" value={meeting.summary} />
+              {showAiAnalysis ? (
+                <div className={styles.meetingAiPanel}>
+                  <strong>Analise da IA</strong>
+                  <p>
+                    A reuniao indica foco em previsibilidade de receita e em proximos passos por conta.
+                    Recomendacao: registrar todos os follow-ups no HubSpot em ate 24h e revisar negocios
+                    parados antes do proximo ritual.
+                  </p>
+                </div>
+              ) : null}
+              <div className={styles.meetingAudioPanel}>
+                <strong>Audio da reuniao</strong>
+                {meeting.audioUrl ? (
+                  <div className={styles.meetingAudioPlayer}>
+                    <span>{meeting.audioLabel || "Gravacao disponivel"}</span>
+                    <audio controls preload="none" src={meeting.audioUrl}>
+                      Seu navegador nao suporta audio.
+                    </audio>
+                  </div>
+                ) : (
+                  <p>Nenhum audio disponivel para esta reuniao.</p>
+                )}
+              </div>
             </div>
           )}
         </Card>
@@ -933,6 +958,7 @@ function SellersContent({ dashboardData }) {
 
 function SellerProfileContent({ dashboardData, sellerSlug }) {
   const router = useRouter();
+  const [selectedStage, setSelectedStage] = useState("");
   const seller = dashboardData.sellers.find((item) => sellerToSlug(item.name) === sellerSlug) || dashboardData.sellers[0];
   const sellerDeals = dashboardData.deals.filter((deal) => deal.owner === seller.name);
   const conversionRate = seller.openDeals + seller.wonDeals > 0
@@ -963,6 +989,11 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
   ];
   const maxKanbanCount = Math.max(1, ...kanbanColumns.map((column) => column.count));
 
+  const stageMatches = (dealStage, stageTitle) => dealStage.toLowerCase().includes(stageTitle.toLowerCase());
+  const stageDeals = selectedStage
+    ? sellerDeals.filter((deal) => stageMatches(deal.stage, selectedStage))
+    : [];
+
   return (
     <section className={styles.dashboardSection}>
       <header className={styles.sellerDetailHeader}>
@@ -971,16 +1002,16 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
           <div className={`${styles.settingsHeader} ${styles.sellerDetailHeaderBlock}`.trim()}>
             <h1>{seller.name}</h1>
             <p>{seller.team}</p>
-            <div className={styles.sellerMeetingActions}>
-              <button
-                type="button"
-                className={styles.primaryActionButton}
-                onClick={() => router.push(`/vendedores/${sellerSlug}/reunioes`)}
-              >
-                <MeetingIcon />
-                <span>Reunioes internas</span>
-              </button>
-            </div>
+          </div>
+          <div className={`${styles.sellerMeetingActions} ${styles.sellerProfileMeetingActions}`.trim()}>
+            <button
+              type="button"
+              className={styles.primaryActionButton}
+              onClick={() => router.push(`/vendedores/${sellerSlug}/reunioes`)}
+            >
+              <MeetingIcon />
+              <span>Reunioes internas</span>
+            </button>
           </div>
         </div>
       </header>
@@ -1003,7 +1034,12 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
           </div>
           <div className={styles.pipelineStageChart}>
             {kanbanColumns.map((column) => (
-              <article key={column.title} className={styles.pipelineStageBarCard}>
+              <button
+                key={column.title}
+                type="button"
+                className={styles.pipelineStageBarCard}
+                onClick={() => setSelectedStage(column.title)}
+              >
                 <div className={styles.pipelineStageBarWrap}>
                   <div
                     className={styles.pipelineStageBar}
@@ -1012,7 +1048,7 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
                 </div>
                 <strong>{column.count}</strong>
                 <span>{column.title}</span>
-              </article>
+              </button>
             ))}
           </div>
         </Card>
@@ -1087,6 +1123,53 @@ function SellerProfileContent({ dashboardData, sellerSlug }) {
           </div>
         </Card>
       </div>
+
+      {selectedStage ? (
+        <div
+          className={styles.stageModalBackdrop}
+          role="presentation"
+          onClick={() => setSelectedStage("")}
+        >
+          <div
+            className={styles.stageModal}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Negocios em ${selectedStage}`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header className={styles.stageModalHeader}>
+              <div>
+                <span>ETAPA</span>
+                <h3>{selectedStage}</h3>
+                <p>{seller.name} · {stageDeals.length} negocio(s)</p>
+              </div>
+              <button
+                type="button"
+                className={styles.secondaryActionButton}
+                onClick={() => setSelectedStage("")}
+              >
+                Fechar
+              </button>
+            </header>
+            <div className={styles.stageModalList}>
+              {stageDeals.length ? stageDeals.map((deal) => (
+                <article key={deal.id} className={styles.stageModalItem}>
+                  <div>
+                    <strong>{deal.name}</strong>
+                    <span>{deal.owner}</span>
+                  </div>
+                  <div>
+                    <strong>{deal.amountLabel}</strong>
+                    <span>{deal.staleLabel}</span>
+                  </div>
+                </article>
+              )) : (
+                <p className={styles.sellerDetailNote}>Nenhum negocio nesta etapa para este vendedor.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
